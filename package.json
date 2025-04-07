@@ -1,0 +1,28 @@
+{
+  "name": "ecommerce-kafka",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "start:dev": "ts-node-dev src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevKike/ecommerce-kafka.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DevKike/ecommerce-kafka/issues"
+  },
+  "homepage": "https://github.com/DevKike/ecommerce-kafka#readme",
+  "description": "",
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
