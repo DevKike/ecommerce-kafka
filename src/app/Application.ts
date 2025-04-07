@@ -1,6 +1,6 @@
 import { CONSTANT } from '../config/constants/constants';
 import express, { Application as App } from 'express';
-import { MongoConnection } from '../config/db/mongoConnection';
+import { MongoConnection } from '../config/db/MongoConnection';
 import { Logger } from '../utils/logger/Logger';
 
 export class Application {
