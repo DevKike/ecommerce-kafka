@@ -1,6 +1,6 @@
 import { Db, MongoClient } from 'mongodb';
-import { CONSTANT } from '../config/constants/constants';
-import { Logger } from '../utils/logger/Logger';
+import { CONSTANT } from '../constants/constants';
+import { Logger } from '../../utils/logger/Logger';
 
 export class MongoConnection {
   private static instance: MongoConnection;
