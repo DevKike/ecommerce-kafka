@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { saveUser } from '../controllers/UserController';
+import { saveUser } from '../controllers/userController';
 import { injectable } from 'inversify';
 
 @injectable()
