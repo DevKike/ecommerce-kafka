@@ -14,6 +14,7 @@ export const findById = async (id: IUser['id']): Promise<IUser> => {
     throw new Error(`Error finding user by ID: ${error}`);
   }
 };
+
 export const findAll = async (): Promise<IUser[]> => {
   try {
     const users = await UserModel.find();
