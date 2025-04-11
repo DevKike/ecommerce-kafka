@@ -5,7 +5,6 @@ import { HttpStatusCode } from '../modules/common/enums/HttpStatusCode';
 export const middlewareSchema = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const { error } = schema.validate(req.body, { abortEarly: true });
-    console.log('🚀 ~ return ~ result:', error);
 
     if (error)
       res
