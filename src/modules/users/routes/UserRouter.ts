@@ -4,6 +4,7 @@ import { injectable } from 'inversify';
 import { middlewareSchema } from '../../../middleware/middlewareSchema';
 import { userSchema } from '../schemas/userSchema';
 import { HttpStatusCode } from '../../common/enums/HttpStatusCode';
+import { ResponseManager } from '../../common/response/ResponseManager';
 
 @injectable()
 export class UserRouter {
@@ -19,10 +20,12 @@ export class UserRouter {
       middlewareSchema(userSchema),
       async (req, res) => {
         try {
-          await saveUser(req.body);
-          res
-            .status(HttpStatusCode.CREATED)
-            .json({ message: 'User created successfully' });
+          ResponseManager.manageResponse(
+            saveUser(req.body),
+            res,
+            'User created with success!',
+            HttpStatusCode.CREATED
+          );
         } catch (error) {
           res
             .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
