@@ -23,7 +23,7 @@ export class Application {
     try {
       await this.initDatabase();
       this.initMiddlewares();
-      await this.initRoutes();
+      this.initRoutes();
 
       await this.startServer();
     } catch (error) {
