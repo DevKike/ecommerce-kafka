@@ -17,6 +17,7 @@
   "homepage": "https://github.com/DevKike/ecommerce-kafka#readme",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "express": "^5.1.0",
     "inversify": "^7.5.0",
     "joi": "^17.13.3",
@@ -26,6 +27,7 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.1",
     "@types/joi": "^17.2.2",
     "@types/node": "^22.14.0",

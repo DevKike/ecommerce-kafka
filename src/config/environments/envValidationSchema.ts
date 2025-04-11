@@ -1,10 +1,9 @@
-import joi from 'joi';
+import Joi from 'joi';
 
-export const envSchema = joi.object({
-  NODE_ENV: joi
-    .string()
+export const envSchema = Joi.object({
+  NODE_ENV: Joi.string()
     .valid('development', 'production', 'test')
     .default('development'),
-  PORT: joi.number().default(3000),
-  MONGODB_URI: joi.string().uri().required(),
+  PORT: Joi.number().default(3000),
+  MONGODB_URI: Joi.string().uri().required(),
 });
