@@ -1,26 +1,26 @@
-import { hash } from "../../../utils/encrypt/encrypt";
-import { saveEvent } from "../../common/services/eventService";
-import { IEvent } from "../../common/events/interfaces/IEvent";
-import { IUser, IUserCreate, IUserLogin } from "../models/IUser";
-import mongoose from "mongoose";
-import { CONSTANT_KAFKA } from "../../common/constants/constants";
+import { hash } from '../../../utils/encrypt/encrypt';
+import { saveEvent } from '../../common/services/eventService';
+import { IEvent } from '../../common/events/interfaces/IEvent';
+import { IUser, IUserCreate, IUserLogin } from '../models/IUser';
+import mongoose from 'mongoose';
+import { CONSTANT_KAFKA } from '../../common/constants/constants';
 import {
   findByEmail,
   findByPhone,
   login,
   saveUser,
-} from "../services/userService";
-import { userProducer } from "../producers/userProducer";
-import { AlreadyExistException } from "../../common/exceptions/AlreadyExistsException";
+} from '../services/userService';
+import { userProducer } from '../producers/userProducer';
+import { AlreadyExistException } from '../../common/exceptions/AlreadyExistsException';
 
 export const registerUser = async (userData: IUserCreate): Promise<IUser> => {
   const existingEmail = await findByEmail(userData.email);
 
-  if (existingEmail) throw new AlreadyExistException("User already exists");
+  if (existingEmail) throw new AlreadyExistException('User already exists');
 
   const existingPhone = await findByPhone(userData.email);
 
-  if (existingPhone) throw new AlreadyExistException("User already exists");
+  if (existingPhone) throw new AlreadyExistException('User already exists');
 
   const hashedPassword = await hash(userData.password);
   const eventId = new mongoose.Types.ObjectId();
@@ -41,7 +41,7 @@ export const registerUser = async (userData: IUserCreate): Promise<IUser> => {
     },
     snapshot: {
       id: `usr_${userId.toString()}`,
-      status: "REGISTERED",
+      status: 'REGISTERED',
     },
   };
 
@@ -82,7 +82,7 @@ export const loginUser = async (
     },
     snapshot: {
       id: authResult.user.id,
-      status: "LOGGED_IN",
+      status: 'LOGGED_IN',
     },
   };
 
