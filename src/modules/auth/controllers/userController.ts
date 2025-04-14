@@ -4,13 +4,18 @@ import { IEvent } from '../../common/events/interfaces/IEvent';
 import { IUser, IUserCreate } from '../models/IUser';
 import mongoose from 'mongoose';
 import { CONSTANT_KAFKA } from '../../common/constants/constants';
-import { saveUser } from '../services/userService';
+import { findByEmail, findByPhone, saveUser } from '../services/userService';
 import { userProducer } from '../producers/userProducer';
+import { AlreadyExistException } from '../../common/exceptions/AlreadyExistsException';
 
 export const registerUser = async (userData: IUserCreate): Promise<IUser> => {
-  /*  const existingUser = await findByEmail(userData.email);
+  const existingEmail = await findByEmail(userData.email);
 
-  if (existingUser) throw new AlreadyExistException('User already exists'); */
+  if (existingEmail) throw new AlreadyExistException('User already exists');
+
+  const existingPhone = await findByPhone(userData.email);
+
+  if (existingPhone) throw new AlreadyExistException('User already exists');
 
   const hashedPassword = await hash(userData.password);
   const eventId = new mongoose.Types.ObjectId();
