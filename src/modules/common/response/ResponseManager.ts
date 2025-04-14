@@ -3,6 +3,7 @@ import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 import { BaseException } from '../exceptions/BaseException';
 import { NotFoundException } from '../exceptions/NotFoundException';
 import { AlreadyExistException } from '../exceptions/AlreadyExistsException';
+import { UnauthorizedException } from '../exceptions/UnauthorizedException';
 
 export class ResponseManager {
   constructor() {}
@@ -16,7 +17,7 @@ export class ResponseManager {
     try {
       const result = await promise;
 
-      return appResponse.status(statusCode).json({ message, result });
+      return appResponse.status(statusCode).json({ message, data: result });
     } catch (error) {
       return await this.handleError(error as BaseException, appResponse);
     }
@@ -35,6 +36,12 @@ export class ResponseManager {
     if (error instanceof AlreadyExistException) {
       return appResponse
         .status(HttpStatusCode.CONFLICT)
+        .json({ message: error.message });
+    }
+
+    if (error instanceof UnauthorizedException) {
+      return appResponse
+        .status(HttpStatusCode.UNAUTHORIZED)
         .json({ message: error.message });
     }
 
