@@ -4,6 +4,7 @@ import { BaseException } from '../exceptions/BaseException';
 import { NotFoundException } from '../exceptions/NotFoundException';
 import { AlreadyExistException } from '../exceptions/AlreadyExistsException';
 import { UnauthorizedException } from '../exceptions/UnauthorizedException';
+import { CONSTANT_CONFIG } from '../../../core/constants/constantsConfig';
 
 export class ResponseManager {
   constructor() {}
@@ -24,29 +25,40 @@ export class ResponseManager {
   }
 
   private static async handleError(
-    error: BaseException,
+    error: Error | BaseException,
     appResponse: Response
   ): Promise<Response> {
-    if (error instanceof NotFoundException) {
+    if (error instanceof BaseException) {
+      if (error instanceof NotFoundException) {
+        return appResponse
+          .status(HttpStatusCode.NOT_FOUND)
+          .json({ message: error.message });
+      }
+
+      if (error instanceof AlreadyExistException) {
+        return appResponse
+          .status(HttpStatusCode.CONFLICT)
+          .json({ message: error.message });
+      }
+
+      if (error instanceof UnauthorizedException) {
+        return appResponse
+          .status(HttpStatusCode.UNAUTHORIZED)
+          .json({ message: error.message });
+      }
       return appResponse
-        .status(HttpStatusCode.NOT_FOUND)
-        .json({ message: error.message });
+        .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
+        .json({ message: 'Internal server error', error });
     }
 
-    if (error instanceof AlreadyExistException) {
-      return appResponse
-        .status(HttpStatusCode.CONFLICT)
-        .json({ message: error.message });
-    }
-
-    if (error instanceof UnauthorizedException) {
-      return appResponse
-        .status(HttpStatusCode.UNAUTHORIZED)
-        .json({ message: error.message });
-    }
-
-    return appResponse
-      .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
-      .json({ message: 'Internal server error', error });
+    return appResponse.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
+      message: 'Internal server error',
+      error: CONSTANT_CONFIG.ENVIRONMENT.NODE_ENV
+        ? undefined
+        : {
+            message: error.message,
+            stack: error.stack,
+          },
+    });
   }
 }

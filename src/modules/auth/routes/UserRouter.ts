@@ -19,8 +19,8 @@ export class UserRouter {
       '/register',
       middlewareSchema(userSchema),
       async (req, res) => {
-        ResponseManager.manageResponse(
-          await registerUser(req.body),
+        await ResponseManager.manageResponse(
+          registerUser(req.body),
           res,
           'User registered with success!',
           HttpStatusCode.CREATED
@@ -32,8 +32,8 @@ export class UserRouter {
       '/login',
       middlewareSchema(loginSchema),
       async (req, res) => {
-        ResponseManager.manageResponse(
-          await loginUser(req.body),
+        await ResponseManager.manageResponse(
+          loginUser(req.body),
           res,
           'Logged in with success!',
           HttpStatusCode.OK
