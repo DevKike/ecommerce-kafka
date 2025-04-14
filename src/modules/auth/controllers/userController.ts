@@ -1,7 +1,7 @@
 import { hash } from '../../../utils/encrypt/encrypt';
 import { saveEvent } from '../../common/services/eventService';
 import { IEvent } from '../../common/events/interfaces/IEvent';
-import { IUser, IUserCreate, IUserLogin } from '../models/IUser';
+import { IUser, IUserCreate, IUserLogin, IUserResponse } from '../models/IUser';
 import mongoose from 'mongoose';
 import { CONSTANT_KAFKA } from '../../common/constants/constants';
 import {
@@ -13,7 +13,9 @@ import {
 import { userProducer } from '../producers/userProducer';
 import { AlreadyExistException } from '../../common/exceptions/AlreadyExistsException';
 
-export const registerUser = async (userData: IUserCreate): Promise<IUser> => {
+export const registerUser = async (
+  userData: IUserCreate
+): Promise<IUserResponse> => {
   const existingEmail = await findByEmail(userData.email);
 
   if (existingEmail) throw new AlreadyExistException('User already exists');
@@ -57,16 +59,23 @@ export const registerUser = async (userData: IUserCreate): Promise<IUser> => {
 
   await saveEvent(userEvent);
 
-  return await saveUser({
+  const userCreated = await saveUser({
     ...userData,
     password: hashedPassword,
     id: userId.toString(),
   });
+
+  const userPlain = JSON.parse(JSON.stringify(userCreated));
+
+  delete userPlain.password;
+  delete userPlain._id;
+
+  return userPlain;
 };
 
 export const loginUser = async (
   loginData: IUserLogin
-): Promise<{ user: IUser; token: string }> => {
+): Promise<{ user: Omit<IUser, 'password'>; token: string }> => {
   const authResult = await login(loginData);
 
   const eventId = new mongoose.Types.ObjectId();
@@ -98,5 +107,10 @@ export const loginUser = async (
 
   await saveEvent(loginEvent);
 
-  return authResult;
+  const userPlain = JSON.parse(JSON.stringify(authResult.user));
+
+  delete userPlain.password;
+  delete userPlain._id;
+
+  return { user: userPlain, token: authResult.token };
 };
