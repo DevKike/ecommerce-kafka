@@ -14,9 +14,9 @@ export class ResponseManager {
     statusCode: HttpStatusCode
   ): Promise<Response> {
     try {
-      await promise;
+      const result = await promise;
 
-      return appResponse.status(statusCode).json({ message });
+      return appResponse.status(statusCode).json({ message, result });
     } catch (error) {
       return await this.handleError(error as BaseException, appResponse);
     }
