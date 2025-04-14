@@ -4,14 +4,13 @@ import { IEvent } from '../../common/events/interfaces/IEvent';
 import { IUser, IUserCreate, IUserLogin, IUserResponse } from '../models/IUser';
 import mongoose from 'mongoose';
 import { CONSTANT_KAFKA } from '../../common/constants/constants';
-import {
-  findByEmail,
-  findByPhone,
-  login,
-  saveUser,
-} from '../services/userService';
+import { findByEmail, findByPhone, saveUser } from '../services/userService';
 import { userProducer } from '../producers/userProducer';
 import { AlreadyExistException } from '../../common/exceptions/AlreadyExistsException';
+import { ITokenPayload } from '../interfaces/IToken';
+import { signToken } from '../services/jwtService';
+import { compare } from 'bcrypt';
+import { UnauthorizedException } from '../../common/exceptions/UnauthorizedException';
 
 export const registerUser = async (
   userData: IUserCreate
@@ -20,7 +19,7 @@ export const registerUser = async (
 
   if (existingEmail) throw new AlreadyExistException('User already exists');
 
-  const existingPhone = await findByPhone(userData.email);
+  const existingPhone = await findByPhone(userData.phone);
 
   if (existingPhone) throw new AlreadyExistException('User already exists');
 
@@ -76,7 +75,20 @@ export const registerUser = async (
 export const loginUser = async (
   loginData: IUserLogin
 ): Promise<{ user: Omit<IUser, 'password'>; token: string }> => {
-  const authResult = await login(loginData);
+  const user = await findByEmail(loginData.email);
+
+  if (!user) throw new UnauthorizedException('Invalid credentials');
+
+  const isPasswordValid = await compare(loginData.password, user.password);
+
+  if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
+
+  const tokenPayload: ITokenPayload = {
+    id: user.id,
+    email: user.email,
+  };
+
+  const token = signToken(tokenPayload);
 
   const eventId = new mongoose.Types.ObjectId();
 
@@ -86,11 +98,11 @@ export const loginUser = async (
     source: CONSTANT_KAFKA.SOURCE.USER_SERVICE,
     topic: CONSTANT_KAFKA.TOPIC.USER.LOGIN,
     payload: {
-      userid: authResult.user.id,
-      email: authResult.user.email,
+      userid: user.id,
+      email: user.email,
     },
     snapshot: {
-      id: authResult.user.id,
+      id: user.id,
       status: 'LOGGED_IN',
     },
   };
@@ -107,10 +119,10 @@ export const loginUser = async (
 
   await saveEvent(loginEvent);
 
-  const userPlain = JSON.parse(JSON.stringify(authResult.user));
+  const userPlain = JSON.parse(JSON.stringify(user));
 
   delete userPlain.password;
   delete userPlain._id;
 
-  return { user: userPlain, token: authResult.token };
+  return { user: userPlain, token };
 };
