@@ -8,3 +8,5 @@ export interface IUser {
 }
 
 export interface IUserCreate extends Omit<IUser, 'id'> {}
+
+export interface IUserLogin extends Pick<IUser, 'email' | 'password'> {}

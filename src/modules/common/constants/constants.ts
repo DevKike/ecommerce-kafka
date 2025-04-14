@@ -6,6 +6,7 @@ export const CONSTANT_KAFKA = {
   TOPIC: {
     USER: {
       WELCOME_FLOW: 'welcome_flow',
+      LOGIN: 'user_login',
     },
   },
 };

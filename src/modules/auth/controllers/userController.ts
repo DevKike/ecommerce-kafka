@@ -1,21 +1,26 @@
-import { hash } from '../../../utils/encrypt/encrypt';
-import { saveEvent } from '../../common/services/eventService';
-import { IEvent } from '../../common/events/interfaces/IEvent';
-import { IUser, IUserCreate } from '../models/IUser';
-import mongoose from 'mongoose';
-import { CONSTANT_KAFKA } from '../../common/constants/constants';
-import { findByEmail, findByPhone, saveUser } from '../services/userService';
-import { userProducer } from '../producers/userProducer';
-import { AlreadyExistException } from '../../common/exceptions/AlreadyExistsException';
+import { hash } from "../../../utils/encrypt/encrypt";
+import { saveEvent } from "../../common/services/eventService";
+import { IEvent } from "../../common/events/interfaces/IEvent";
+import { IUser, IUserCreate, IUserLogin } from "../models/IUser";
+import mongoose from "mongoose";
+import { CONSTANT_KAFKA } from "../../common/constants/constants";
+import {
+  findByEmail,
+  findByPhone,
+  login,
+  saveUser,
+} from "../services/userService";
+import { userProducer } from "../producers/userProducer";
+import { AlreadyExistException } from "../../common/exceptions/AlreadyExistsException";
 
 export const registerUser = async (userData: IUserCreate): Promise<IUser> => {
   const existingEmail = await findByEmail(userData.email);
 
-  if (existingEmail) throw new AlreadyExistException('User already exists');
+  if (existingEmail) throw new AlreadyExistException("User already exists");
 
   const existingPhone = await findByPhone(userData.email);
 
-  if (existingPhone) throw new AlreadyExistException('User already exists');
+  if (existingPhone) throw new AlreadyExistException("User already exists");
 
   const hashedPassword = await hash(userData.password);
   const eventId = new mongoose.Types.ObjectId();
@@ -36,7 +41,7 @@ export const registerUser = async (userData: IUserCreate): Promise<IUser> => {
     },
     snapshot: {
       id: `usr_${userId.toString()}`,
-      status: 'REGISTERED',
+      status: "REGISTERED",
     },
   };
 
@@ -57,4 +62,41 @@ export const registerUser = async (userData: IUserCreate): Promise<IUser> => {
     password: hashedPassword,
     id: userId.toString(),
   });
+};
+
+export const loginUser = async (
+  loginData: IUserLogin
+): Promise<{ user: IUser; token: string }> => {
+  const authResult = await login(loginData);
+
+  const eventId = new mongoose.Types.ObjectId();
+
+  const loginEvent: IEvent = {
+    id: `evt_${eventId.toString()}`,
+    timestamp: new Date().toISOString(),
+    source: CONSTANT_KAFKA.SOURCE.USER_SERVICE,
+    topic: CONSTANT_KAFKA.TOPIC.USER.LOGIN,
+    payload: {
+      userid: authResult.user.id,
+      email: authResult.user.email,
+    },
+    snapshot: {
+      id: authResult.user.id,
+      status: "LOGGED_IN",
+    },
+  };
+
+  await userProducer.send({
+    topic: CONSTANT_KAFKA.TOPIC.USER.LOGIN,
+    messages: [
+      {
+        key: loginEvent.id,
+        value: JSON.stringify(loginEvent),
+      },
+    ],
+  });
+
+  await saveEvent(loginEvent);
+
+  return authResult;
 };
