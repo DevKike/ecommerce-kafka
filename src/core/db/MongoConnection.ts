@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { CONSTANT } from '../constants/constants';
+import { CONSTANT_CONFIG } from '../constants/constantsConfig';
 import { Logger } from '../../utils/logger/Logger';
 
 export class MongoConnection {
@@ -22,11 +22,11 @@ export class MongoConnection {
     }
 
     try {
-      const username = CONSTANT.ENVIRONMENT.MONGODB_USERNAME;
-      const password = CONSTANT.ENVIRONMENT.MONGODB_PASSWORD;
-      const host = CONSTANT.ENVIRONMENT.MONGODB_HOST;
-      const port = CONSTANT.ENVIRONMENT.MONGODB_PORT;
-      const dbName = CONSTANT.ENVIRONMENT.DB_NAME;
+      const username = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_USERNAME;
+      const password = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_PASSWORD;
+      const host = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_HOST;
+      const port = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_PORT;
+      const dbName = CONSTANT_CONFIG.ENVIRONMENT.DB_NAME;
 
       const mongoUri = `mongodb://${username}:${password}@${host}:${port}/${dbName}?authSource=admin`;
 

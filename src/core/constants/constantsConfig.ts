@@ -1,4 +1,4 @@
-export const CONSTANT = {
+export const CONSTANT_CONFIG = {
   ENVIRONMENT: {
     NODE_ENV: process.env.NODE_ENV || 'development',
     PORT: Number(process.env.PORT) || 3000,
@@ -9,11 +9,5 @@ export const CONSTANT = {
     MONGODB_PORT: Number(process.env.MONGODB_PORT) || 27017,
     LOG_LEVEL: process.env.LOG_LEVEL || 'info',
     HASH_SALT: Number(process.env.HASH_SALT) || 10,
-  },
-
-  EVENT: {
-    USER: {
-      REGISTERED: 'user.registered',
-    },
   },
 };

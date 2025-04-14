@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ObjectSchema } from 'joi';
-import { HttpStatusCode } from '../modules/common/enums/HttpStatusCode';
+import { HttpStatusCode } from '../core/enums/HttpStatusCode';
 
 export const middlewareSchema = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {

@@ -1,8 +1,8 @@
 import { Container } from 'inversify';
 import { TYPES } from '../types/inversifyTypes';
-import { RouterManager } from '../../router/RouterManager';
-import { Application } from '../../../../app/Application';
-import { UserRouter } from '../../../users/routes/UserRouter';
+import { RouterManager } from '../../../modules/common/router/RouterManager';
+import { UserRouter } from '../../../modules/auth/routes/UserRouter';
+import { Application } from '../../../app/Application';
 
 const container = new Container();
 

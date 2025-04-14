@@ -1,5 +1,5 @@
 import { BaseException } from './BaseException';
-import { HttpStatusCode } from '../enums/HttpStatusCode';
+import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 
 export class NotFoundException extends BaseException {
   public statusCode: HttpStatusCode;

@@ -1,6 +1,6 @@
 import { Application } from './app/Application';
-import { container } from './modules/common/inversify/config/inversifyConfig';
-import { TYPES } from './modules/common/inversify/types/inversifyTypes';
+import { container } from './core/inversify/config/inversifyConfig';
+import { TYPES } from './core/inversify/types/inversifyTypes';
 
 async function bootstrap() {
   try {

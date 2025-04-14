@@ -1,8 +1,7 @@
 import { Application } from 'express';
-import { UserRouter } from '../../users/routes/UserRouter';
+import { UserRouter } from '../../auth/routes/UserRouter';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../inversify/types/inversifyTypes';
-import { Logger } from '../../../utils/logger/Logger';
+import { TYPES } from '../../../core/inversify/types/inversifyTypes';
 
 @injectable()
 export class RouterManager {

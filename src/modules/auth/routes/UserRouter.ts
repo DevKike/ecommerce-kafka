@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { saveUser } from '../controllers/userController';
+import { registerUser } from '../controllers/userController';
 import { injectable } from 'inversify';
 import { middlewareSchema } from '../../../middleware/middlewareSchema';
 import { userSchema } from '../schemas/userSchema';
-import { HttpStatusCode } from '../../common/enums/HttpStatusCode';
+import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 import { ResponseManager } from '../../common/response/ResponseManager';
 
 @injectable()
@@ -21,15 +21,15 @@ export class UserRouter {
       async (req, res) => {
         try {
           ResponseManager.manageResponse(
-            saveUser(req.body),
+            registerUser(req.body),
             res,
-            'User created with success!',
+            'User registered with success!',
             HttpStatusCode.CREATED
           );
         } catch (error) {
           res
             .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
-            .json({ message: 'Error creating user', error });
+            .json({ message: 'Error registered user', error });
         }
       }
     );

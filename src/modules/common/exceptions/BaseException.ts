@@ -1,4 +1,4 @@
-import { HttpStatusCode } from '../enums/HttpStatusCode';
+import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 
 export abstract class BaseException extends Error {
   public statusCode: HttpStatusCode;

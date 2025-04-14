@@ -1,9 +1,9 @@
 import winston from 'winston';
-import { CONSTANT } from '../../config/constants/constants';
+import { CONSTANT_CONFIG } from '../../core/constants/constantsConfig';
 
 export class Logger {
   private static logger = winston.createLogger({
-    level: CONSTANT.ENVIRONMENT.LOG_LEVEL,
+    level: CONSTANT_CONFIG.ENVIRONMENT.LOG_LEVEL,
     format: winston.format.combine(
       winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       winston.format.colorize(),

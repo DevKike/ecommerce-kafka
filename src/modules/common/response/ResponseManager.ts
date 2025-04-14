@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { HttpStatusCode } from '../enums/HttpStatusCode';
+import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 import { BaseException } from '../exceptions/BaseException';
 import { NotFoundException } from '../exceptions/NotFoundException';
 import { AlreadyExistException } from '../exceptions/AlreadyExistsException';
@@ -14,9 +14,9 @@ export class ResponseManager {
     statusCode: HttpStatusCode
   ): Promise<Response> {
     try {
-      const result = await promise;
+      await promise;
 
-      return appResponse.status(statusCode).json({ message, data: result });
+      return appResponse.status(statusCode).json({ message });
     } catch (error) {
       return await this.handleError(error as BaseException, appResponse);
     }
