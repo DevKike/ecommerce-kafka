@@ -6,10 +6,12 @@ export const middlewareSchema = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const { error } = schema.validate(req.body, { abortEarly: true });
 
-    if (error)
+    if (error) {
       res
         .status(HttpStatusCode.BAD_REQUEST)
         .json({ error: error.details[0].message });
+      return;
+    }
 
     next();
   };
