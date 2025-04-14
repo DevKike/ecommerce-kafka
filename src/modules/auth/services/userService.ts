@@ -1,10 +1,8 @@
-import { CONSTANT_CONFIG } from "../../../core/constants/constantsConfig";
 import { compare } from "../../../utils/encrypt/encrypt";
 import { UnauthorizedException } from "../../common/exceptions/UnauthorizedException";
 import { ITokenPayload } from "../interfaces/IToken";
 import { IUser, IUserLogin } from "../models/IUser";
 import UserModel from "../models/userModel";
-import jwt from "jsonwebtoken";
 import { signToken } from "./jwtService";
 
 export const findByEmail = async (email: string): Promise<IUser | null> => {
