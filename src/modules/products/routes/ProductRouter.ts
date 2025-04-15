@@ -1,8 +1,8 @@
-import { response, Router } from "express";
-import { injectable } from "inversify";
-import { ResponseManager } from "../../common/response/ResponseManager";
-import { getAllProducts } from "../controllers/productController";
-import { HttpStatusCode } from "../../../core/enums/HttpStatusCode";
+import { Router } from 'express';
+import { injectable } from 'inversify';
+import { ResponseManager } from '../../common/response/ResponseManager';
+import { productController } from '../controllers/productController';
+import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 
 @injectable()
 export class ProductRouter {
@@ -13,11 +13,11 @@ export class ProductRouter {
   }
 
   initRoutes() {
-    this.router.get("/", async (req, res) => {
+    this.router.get('/', async (req, res) => {
       await ResponseManager.manageResponse(
-        getAllProducts(),
+        productController.getAllProducts(),
         res,
-        "Products fetched successfully",
+        'Products fetched successfully',
         HttpStatusCode.OK
       );
     });
