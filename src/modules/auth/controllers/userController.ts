@@ -8,7 +8,7 @@ import { findByEmail, findByPhone, saveUser } from '../services/userService';
 import { userProducer } from '../producers/userProducer';
 import { AlreadyExistException } from '../../common/exceptions/AlreadyExistsException';
 import { ITokenPayload } from '../interfaces/IToken';
-import { signToken } from '../services/jwtService';
+import { jwtService } from '../services/jwtService';
 import { compare } from 'bcrypt';
 import { UnauthorizedException } from '../../common/exceptions/UnauthorizedException';
 
@@ -88,7 +88,7 @@ export const loginUser = async (
     email: user.email,
   };
 
-  const token = signToken(tokenPayload);
+  const token = jwtService.signToken(tokenPayload);
 
   const eventId = new mongoose.Types.ObjectId();
 
