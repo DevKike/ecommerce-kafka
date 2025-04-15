@@ -1,15 +1,18 @@
-import { Application } from 'express';
-import { UserRouter } from '../../auth/routes/UserRouter';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../../core/inversify/types/inversifyTypes';
+import { Application } from "express";
+import { UserRouter } from "../../auth/routes/UserRouter";
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../../core/inversify/types/inversifyTypes";
+import { ProductRouter } from "../../products/routes/ProductRouter";
 
 @injectable()
 export class RouterManager {
   constructor(
-    @inject(TYPES.UserRouter) private readonly userRouter: UserRouter
+    @inject(TYPES.UserRouter) private readonly userRouter: UserRouter,
+    @inject(TYPES.ProductRouter)private readonly productRouter: ProductRouter
   ) {}
 
   manageRoutes(app: Application): void {
-    app.use('/api/users', this.userRouter.getRouter());
+    app.use("/api/users", this.userRouter.getRouter());
+    app.use("/api/products", this.productRouter.getRouter());
   }
 }

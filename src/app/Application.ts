@@ -8,6 +8,7 @@ import { TYPES } from '../core/inversify/types/inversifyTypes';
 import { userProducer } from '../modules/auth/producers/userProducer';
 import { validateEnv } from '../core/environments/validation/validateEnv';
 import { envSchema } from '../core/environments/validation/envSchema';
+import { runSeeder } from '../modules/products/seed/runSeeder';
 
 @injectable()
 export class Application {
@@ -26,6 +27,7 @@ export class Application {
     try {
       validateEnv(envSchema);
       await this.initDatabase();
+      await runSeeder();
       await this.initProducers();
       this.initMiddlewares();
       this.initRoutes();
