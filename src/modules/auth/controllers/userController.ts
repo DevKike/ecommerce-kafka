@@ -4,125 +4,126 @@ import { IEvent } from '../../common/events/interfaces/IEvent';
 import { IUser, IUserCreate, IUserLogin, IUserResponse } from '../models/IUser';
 import mongoose from 'mongoose';
 import { CONSTANT_KAFKA } from '../../common/constants/constants';
-import { findByEmail, findByPhone, saveUser } from '../services/userService';
+import { userService } from '../services/userService';
 import { userProducer } from '../producers/userProducer';
 import { AlreadyExistException } from '../../common/exceptions/AlreadyExistsException';
 import { ITokenPayload } from '../interfaces/IToken';
-import { signToken } from '../services/jwtService';
+import { jwtService } from '../services/jwtService';
 import { compare } from 'bcrypt';
 import { UnauthorizedException } from '../../common/exceptions/UnauthorizedException';
 
-export const registerUser = async (
-  userData: IUserCreate
-): Promise<IUserResponse> => {
-  const existingEmail = await findByEmail(userData.email);
+export const userController = {
+  registerUser: async (userData: IUserCreate): Promise<IUserResponse> => {
+    const existingEmail = await userService.findByEmail(userData.email);
 
-  if (existingEmail) throw new AlreadyExistException('User already exists');
+    if (existingEmail) throw new AlreadyExistException('User already exists');
 
-  const existingPhone = await findByPhone(userData.phone);
+    const existingPhone = await userService.findByPhone(userData.phone);
 
-  if (existingPhone) throw new AlreadyExistException('User already exists');
+    if (existingPhone) throw new AlreadyExistException('User already exists');
 
-  const hashedPassword = await hash(userData.password);
-  const eventId = new mongoose.Types.ObjectId();
-  const userId = new mongoose.Types.ObjectId();
+    const hashedPassword = await hash(userData.password);
+    const eventId = new mongoose.Types.ObjectId();
+    const userId = new mongoose.Types.ObjectId();
 
-  const userEvent: IEvent = {
-    id: `evt_${eventId.toString()}`,
-    timestamp: new Date().toISOString(),
-    source: CONSTANT_KAFKA.SOURCE.USER_SERVICE,
-    topic: CONSTANT_KAFKA.TOPIC.USER.WELCOME_FLOW,
-    payload: {
-      id: `usr_${userId.toString()}`,
-      name: userData.name,
-      lastName: userData.lastName,
-      email: userData.email,
+    const userEvent: IEvent = {
+      id: `evt_${eventId.toString()}`,
+      timestamp: new Date().toISOString(),
+      source: CONSTANT_KAFKA.SOURCE.USER_SERVICE,
+      topic: CONSTANT_KAFKA.TOPIC.USER.WELCOME_FLOW,
+      payload: {
+        id: `usr_${userId.toString()}`,
+        name: userData.name,
+        lastName: userData.lastName,
+        email: userData.email,
+        password: hashedPassword,
+        phone: userData.phone,
+      },
+      snapshot: {
+        id: `usr_${userId.toString()}`,
+        status: 'REGISTERED',
+      },
+    };
+
+    await userProducer.send({
+      topic: CONSTANT_KAFKA.TOPIC.USER.WELCOME_FLOW,
+      messages: [
+        {
+          key: userEvent.id,
+          value: JSON.stringify(userEvent),
+        },
+      ],
+    });
+
+    await saveEvent(userEvent);
+
+    const userCreated = await userService.save({
+      ...userData,
       password: hashedPassword,
-      phone: userData.phone,
-    },
-    snapshot: {
-      id: `usr_${userId.toString()}`,
-      status: 'REGISTERED',
-    },
-  };
+      id: userId.toString(),
+    });
 
-  await userProducer.send({
-    topic: CONSTANT_KAFKA.TOPIC.USER.WELCOME_FLOW,
-    messages: [
-      {
-        key: userEvent.id,
-        value: JSON.stringify(userEvent),
-      },
-    ],
-  });
+    const userPlain = JSON.parse(JSON.stringify(userCreated));
 
-  await saveEvent(userEvent);
+    delete userPlain.password;
+    delete userPlain._id;
 
-  const userCreated = await saveUser({
-    ...userData,
-    password: hashedPassword,
-    id: userId.toString(),
-  });
+    return userPlain;
+  },
 
-  const userPlain = JSON.parse(JSON.stringify(userCreated));
+  loginUser: async (
+    loginData: IUserLogin
+  ): Promise<{ user: Omit<IUser, 'password'>; token: string }> => {
+    const user = await userService.findByEmail(loginData.email);
 
-  delete userPlain.password;
-  delete userPlain._id;
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
-  return userPlain;
-};
+    const isPasswordValid = await compare(loginData.password, user.password);
 
-export const loginUser = async (
-  loginData: IUserLogin
-): Promise<{ user: Omit<IUser, 'password'>; token: string }> => {
-  const user = await findByEmail(loginData.email);
+    if (!isPasswordValid)
+      throw new UnauthorizedException('Invalid credentials');
 
-  if (!user) throw new UnauthorizedException('Invalid credentials');
-
-  const isPasswordValid = await compare(loginData.password, user.password);
-
-  if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
-
-  const tokenPayload: ITokenPayload = {
-    id: user.id,
-    email: user.email,
-  };
-
-  const token = signToken(tokenPayload);
-
-  const eventId = new mongoose.Types.ObjectId();
-
-  const loginEvent: IEvent = {
-    id: `evt_${eventId.toString()}`,
-    timestamp: new Date().toISOString(),
-    source: CONSTANT_KAFKA.SOURCE.USER_SERVICE,
-    topic: CONSTANT_KAFKA.TOPIC.USER.LOGIN,
-    payload: {
-      userid: user.id,
-      email: user.email,
-    },
-    snapshot: {
+    const tokenPayload: ITokenPayload = {
       id: user.id,
-      status: 'LOGGED_IN',
-    },
-  };
+      email: user.email,
+    };
 
-  await userProducer.send({
-    topic: CONSTANT_KAFKA.TOPIC.USER.LOGIN,
-    messages: [
-      {
-        key: loginEvent.id,
-        value: JSON.stringify(loginEvent),
+    const token = jwtService.signToken(tokenPayload);
+
+    const eventId = new mongoose.Types.ObjectId();
+
+    const loginEvent: IEvent = {
+      id: `evt_${eventId.toString()}`,
+      timestamp: new Date().toISOString(),
+      source: CONSTANT_KAFKA.SOURCE.USER_SERVICE,
+      topic: CONSTANT_KAFKA.TOPIC.USER.LOGIN,
+      payload: {
+        userid: user.id,
+        email: user.email,
       },
-    ],
-  });
+      snapshot: {
+        id: user.id,
+        status: 'LOGGED_IN',
+      },
+    };
 
-  await saveEvent(loginEvent);
+    await userProducer.send({
+      topic: CONSTANT_KAFKA.TOPIC.USER.LOGIN,
+      messages: [
+        {
+          key: loginEvent.id,
+          value: JSON.stringify(loginEvent),
+        },
+      ],
+    });
 
-  const userPlain = JSON.parse(JSON.stringify(user));
+    await saveEvent(loginEvent);
 
-  delete userPlain.password;
-  delete userPlain._id;
+    const userPlain = JSON.parse(JSON.stringify(user));
 
-  return { user: userPlain, token };
+    delete userPlain.password;
+    delete userPlain._id;
+
+    return { user: userPlain, token };
+  },
 };
