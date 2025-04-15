@@ -5,9 +5,9 @@ import { Logger } from '../utils/logger/Logger';
 import { RouterManager } from '../modules/common/router/RouterManager';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../core/inversify/types/inversifyTypes';
-import { middlewareSchema } from '../middleware/middlewareSchema';
-import { envSchema } from '../core/environments/envValidationSchema';
 import { userProducer } from '../modules/auth/producers/userProducer';
+import { validateEnv } from '../core/environments/validation/validateEnv';
+import { envSchema } from '../core/environments/validation/envSchema';
 
 @injectable()
 export class Application {
@@ -24,6 +24,7 @@ export class Application {
 
   public async init(): Promise<void> {
     try {
+      validateEnv(envSchema);
       await this.initDatabase();
       await this.initProducers();
       this.initMiddlewares();
@@ -43,7 +44,6 @@ export class Application {
 
   private initMiddlewares(): void {
     this.app.use(express.json());
-    // middlewareSchema(envSchema);
     Logger.info('Middlewares initialized');
   }
 
