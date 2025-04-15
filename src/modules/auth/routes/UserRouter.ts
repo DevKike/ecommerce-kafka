@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loginUser, registerUser } from '../controllers/userController';
+import { userController } from '../controllers/userController';
 import { injectable } from 'inversify';
 import { middlewareSchema } from '../../../middleware/middlewareSchema';
 import { loginSchema, userSchema } from '../schemas/userSchema';
@@ -20,7 +20,7 @@ export class UserRouter {
       middlewareSchema(userSchema),
       async (req, res) => {
         await ResponseManager.manageResponse(
-          registerUser(req.body),
+          userController.registerUser(req.body),
           res,
           'User registered with success!',
           HttpStatusCode.CREATED
@@ -33,7 +33,7 @@ export class UserRouter {
       middlewareSchema(loginSchema),
       async (req, res) => {
         await ResponseManager.manageResponse(
-          loginUser(req.body),
+          userController.loginUser(req.body),
           res,
           'Logged in with success!',
           HttpStatusCode.OK
