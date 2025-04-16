@@ -1,6 +1,6 @@
 import { Container } from 'inversify';
 import { TYPES } from '../types/inversifyTypes';
-import { RouterManager } from '../../../modules/common/router/RouterManager';
+import { RouterManager } from '../../../modules/common/express/router/RouterManager';
 import { UserRouter } from '../../../modules/auth/routes/UserRouter';
 import { Application } from '../../../app/Application';
 import { ProductRouter } from '../../../modules/products/routes/ProductRouter';

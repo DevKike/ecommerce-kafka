@@ -1,4 +1,4 @@
- export interface ITokenPayload {
+export interface ITokenPayload {
   id: string;
   email: string;
 }

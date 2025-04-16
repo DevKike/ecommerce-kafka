@@ -1,5 +1,5 @@
-import EventModel from '../events/models/eventModel';
-import { IEvent } from '../events/interfaces/IEvent';
+import { IEvent } from '../interfaces/IEvent';
+import EventModel from '../models/eventModel';
 
 export const eventService = {
   save: async (event: IEvent): Promise<IEvent> => {
