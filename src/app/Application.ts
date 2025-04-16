@@ -9,6 +9,7 @@ import { userProducer } from '../modules/auth/producers/userProducer';
 import { validateEnv } from '../core/environments/validation/validateEnv';
 import { envSchema } from '../core/environments/validation/envSchema';
 import { runSeeder } from '../modules/products/seed/runSeeder';
+import { productProducer } from '../modules/products/producers/productProducer';
 
 @injectable()
 export class Application {
@@ -27,8 +28,8 @@ export class Application {
     try {
       validateEnv(envSchema);
       await this.initDatabase();
-      await runSeeder();
       await this.initProducers();
+      await runSeeder();
       this.initMiddlewares();
       this.initRoutes();
 
@@ -56,6 +57,7 @@ export class Application {
 
   private async initProducers(): Promise<void> {
     await userProducer.connect();
+    await productProducer.connect();
     Logger.info('Producers initialized');
   }
 
