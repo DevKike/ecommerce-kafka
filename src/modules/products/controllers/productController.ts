@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { IProduct } from '../models/IProduct';
 import { productService } from '../services/productService';
 import { IEvent } from '../../common/events/interfaces/IEvent';
-import { CONSTANT_KAFKA } from '../../common/constants/constants';
+import { CONSTANT_KAFKA } from '../../common/constants/constantsKafka';
 import { productProducer } from '../producers/productProducer';
 import { Logger } from '../../../utils/logger/Logger';
 import { eventService } from '../../common/services/eventService';

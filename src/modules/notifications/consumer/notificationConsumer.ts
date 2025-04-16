@@ -1,5 +1,5 @@
 import { kafka } from '../../../core/kafka/kafkaClient';
-import { CONSTANT_KAFKA } from '../../common/constants/constants';
+import { CONSTANT_KAFKA } from '../../common/constants/constantsKafka';
 import { mailerController } from '../mailer/controllers/mailerController';
 
 export const notificationConsumer = kafka.consumer({
