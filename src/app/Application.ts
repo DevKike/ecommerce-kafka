@@ -10,6 +10,7 @@ import { validateEnv } from '../core/environments/validation/validateEnv';
 import { envSchema } from '../core/environments/validation/envSchema';
 import { runSeeder } from '../modules/products/seed/runSeeder';
 import { productProducer } from '../modules/products/producers/productProducer';
+import { cartProducer } from '../modules/cart/producers/cartProducer';
 
 @injectable()
 export class Application {
@@ -58,6 +59,7 @@ export class Application {
   private async initProducers(): Promise<void> {
     await userProducer.connect();
     await productProducer.connect();
+    await cartProducer.connect();
     Logger.info('Producers initialized');
   }
 
