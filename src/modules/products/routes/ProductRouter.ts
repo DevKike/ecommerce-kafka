@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { injectable } from 'inversify';
 import { ResponseManager } from '../../common/response/ResponseManager';
-import { createProductEvent, productController } from '../controllers/productController';
+import { productController } from '../controllers/productController';
 import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 
 @injectable()
@@ -19,15 +19,6 @@ export class ProductRouter {
         res,
         'Products fetched successfully',
         HttpStatusCode.OK
-      );
-    });
-
-    this.router.post('/', async (req, res) => {
-      await ResponseManager.manageResponse(
-        createProductEvent(req.body),
-        res,
-        'Product created successfully',
-        HttpStatusCode.CREATED
       );
     });
   }
