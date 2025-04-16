@@ -3,7 +3,7 @@ import { eventService } from '../../common/services/eventService';
 import { IEvent } from '../../common/events/interfaces/IEvent';
 import { IUser, IUserCreate, IUserLogin, IUserResponse } from '../models/IUser';
 import mongoose from 'mongoose';
-import { CONSTANT_KAFKA } from '../../common/constants/constants';
+import { CONSTANT_KAFKA } from '../../common/constants/constantsKafka';
 import { userService } from '../services/userService';
 import { userProducer } from '../producers/userProducer';
 import { AlreadyExistException } from '../../common/exceptions/AlreadyExistsException';
