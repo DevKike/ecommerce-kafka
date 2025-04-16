@@ -1,5 +1,5 @@
 import { hash } from '../../../utils/encrypt/encrypt';
-import { saveEvent } from '../../common/services/eventService';
+import { eventService } from '../../common/services/eventService';
 import { IEvent } from '../../common/events/interfaces/IEvent';
 import { IUser, IUserCreate, IUserLogin, IUserResponse } from '../models/IUser';
 import mongoose from 'mongoose';
@@ -55,7 +55,7 @@ export const userController = {
       ],
     });
 
-    await saveEvent(userEvent);
+    await eventService.save(userEvent);
 
     const userCreated = await userService.save({
       ...userData,
@@ -80,8 +80,7 @@ export const userController = {
 
     const isPasswordValid = await compare(loginData.password, user.password);
 
-    if (!isPasswordValid)
-      throw new UnauthorizedException('Invalid credentials');
+    if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
 
     const tokenPayload: ITokenPayload = {
       id: user.id,
@@ -117,7 +116,7 @@ export const userController = {
       ],
     });
 
-    await saveEvent(loginEvent);
+    await eventService.save(loginEvent);
 
     const userPlain = JSON.parse(JSON.stringify(user));
 
