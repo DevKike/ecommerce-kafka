@@ -7,7 +7,6 @@ async function bootstrap() {
     const application = container.get<Application>(TYPES.Application);
     await application.init();
   } catch (error) {
-    console.error('Failed to start application:', error);
     process.exit(1);
   }
 }

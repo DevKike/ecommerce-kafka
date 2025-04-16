@@ -9,7 +9,7 @@ import { CartRouter } from '../../cart/routes/CartRouter';
 export class RouterManager {
   constructor(
     @inject(TYPES.UserRouter) private readonly userRouter: UserRouter,
-    @inject(TYPES.ProductRouter) private readonly productRouter: ProductRouter,
+    @inject(TYPES.ProductRouter)  private readonly productRouter: ProductRouter,
     @inject(TYPES.CartRouter) private readonly cartRouter: CartRouter
   ) {}
 
