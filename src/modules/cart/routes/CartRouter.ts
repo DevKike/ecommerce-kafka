@@ -1,10 +1,12 @@
-import { Router } from 'express';
+import { Response, Router } from 'express';
 import { injectable } from 'inversify';
 import { ResponseManager } from '../../common/express/response/ResponseManager';
 import { cartController } from '../controllers/cartController';
 import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 import { middlewareSchema } from '../../../middleware/middlewareSchema';
 import { addToCartSchema, updateCartItemSchema } from '../schemas/cartSchema';
+import { IRequest } from '../../common/express/interfaces/IRequest';
+import { verifyAuthMiddleware } from '../../../middleware/verifyAuthMiddleware';
 
 @injectable()
 export class CartRouter {
@@ -15,20 +17,19 @@ export class CartRouter {
   }
 
   initRoutes() {
-
     this.router.post(
       '/items',
+      verifyAuthMiddleware(),
       middlewareSchema(addToCartSchema),
-      async (req, res) => {
+      async (req: IRequest, res: Response) => {
         await ResponseManager.manageResponse(
-          cartController.addToCart(req.body),
+          cartController.addToCart(req.user?.sub!, req.body),
           res,
           'Product added to cart successfully',
           HttpStatusCode.CREATED
         );
       }
     );
-
 
     this.router.put(
       '/items',
@@ -44,7 +45,6 @@ export class CartRouter {
       }
     );
 
-    // Eliminar un producto del carrito
     this.router.delete('/items/:userId/:productId', async (req, res) => {
       await ResponseManager.manageResponse(
         cartController.removeFromCart(req.params.userId, req.params.productId),
@@ -53,8 +53,6 @@ export class CartRouter {
         HttpStatusCode.OK
       );
     });
-
-   
   }
 
   getRouter() {
