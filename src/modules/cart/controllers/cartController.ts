@@ -5,7 +5,7 @@ import { IEvent } from '../../common/events/interfaces/IEvent';
 import { CONSTANT_KAFKA } from '../../common/constants/constants';
 import { cartProducer } from '../producers/cartProducer';
 import { Logger } from '../../../utils/logger/Logger';
-import { saveEvent } from '../../common/services/eventService';
+import { eventService } from '../../common/services/eventService';
 import { productService } from '../../products/services/productService';
 import { NotFoundException } from '../../common/exceptions/NotFoundException';
 
@@ -55,7 +55,7 @@ export const createCartUpdateEvent = async (cartItem: ICartItemCreate): Promise<
     });
 
     // Guardar el evento en la base de datos
-    await saveEvent(cartEvent);
+    await eventService.save(cartEvent);
   } catch (error) {
     Logger.error('Error creating cart update event', error);
     throw error;
