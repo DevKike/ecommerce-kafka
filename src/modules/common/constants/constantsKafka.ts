@@ -3,6 +3,7 @@ export const CONSTANT_KAFKA = {
     USER_SERVICE: 'UserService',
     PRODUCT_SERVICE: 'ProductService',
     CART_SERVICE: 'CartService',
+    NOTIFICATION_SERVICE: 'NotificationService',
   },
 
   TOPIC: {
@@ -16,5 +17,8 @@ export const CONSTANT_KAFKA = {
     CART: {
       UPDATED: 'cart_updates',
     },
+    NOTIFICATION: {
+      EMAIL: 'email_notification',
+    },
   },
-};
+}
