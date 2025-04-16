@@ -2,35 +2,33 @@ import mongoose from 'mongoose';
 import { ICartItem, ICartItemCreate } from '../models/ICartItem';
 import CartItemModel from '../models/cartItemModel';
 import { NotFoundException } from '../../common/exceptions/NotFoundException';
+import { IUser } from '../../auth/models/IUser';
 
 export const cartService = {
-  addToCart: async (cartItemData: ICartItemCreate): Promise<ICartItem> => {
+  addToCart: async (
+    userId: IUser['id'],
+    cartItemData: ICartItemCreate
+  ): Promise<ICartItem> => {
     try {
-      // Verificar si ya existe el item para el usuario
       const existingItem = await CartItemModel.findOne({
-        userId: cartItemData.userId,
+        userId: userId,
         productId: cartItemData.productId,
       });
 
       if (existingItem) {
-        // Si existe, actualizar la cantidad
         existingItem.quantity += cartItemData.quantity;
         return await existingItem.save();
       }
 
-      // Si no existe, crear nuevo item
       const id = new mongoose.Types.ObjectId().toString();
       const newCartItem = new CartItemModel({
         id: `cart_item_${id}`,
-        userId: cartItemData.userId,
         productId: cartItemData.productId,
         quantity: cartItemData.quantity,
-        addedAt: new Date().toISOString()
+        addedAt: new Date().toISOString(),
+        userId,
       });
       return await newCartItem.save();
-      
-
-     
     } catch (error) {
       throw error;
     }
