@@ -4,7 +4,7 @@ import { injectable } from 'inversify';
 import { middlewareSchema } from '../../../middleware/middlewareSchema';
 import { loginSchema, userSchema } from '../schemas/userSchema';
 import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
-import { ResponseManager } from '../../common/response/ResponseManager';
+import { ResponseManager } from '../../common/express/response/ResponseManager';
 
 @injectable()
 export class UserRouter {

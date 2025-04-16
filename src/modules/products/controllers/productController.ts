@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 import { IProduct } from '../models/IProduct';
 import { productService } from '../services/productService';
-import { IEvent } from '../../common/events/interfaces/IEvent';
-import { CONSTANT_KAFKA } from '../../common/constants/constantsKafka';
+import { IEvent } from '../../common/kafka/events/interfaces/IEvent';
+import { CONSTANT_KAFKA } from '../../common/kafka/constants/constantsKafka';
 import { productProducer } from '../producers/productProducer';
 import { Logger } from '../../../utils/logger/Logger';
-import { eventService } from '../../common/services/eventService';
+import { eventService } from '../../common/kafka/events/services/eventService';
 
 export const productController = {
   getAllProducts: async (): Promise<IProduct[]> => {

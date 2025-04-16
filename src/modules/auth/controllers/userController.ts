@@ -1,9 +1,8 @@
 import { hash } from '../../../utils/encrypt/encrypt';
-import { eventService } from '../../common/services/eventService';
-import { IEvent } from '../../common/events/interfaces/IEvent';
+import { IEvent } from '../../common/kafka/events/interfaces/IEvent';
 import { IUser, IUserCreate, IUserLogin, IUserResponse } from '../models/IUser';
 import mongoose from 'mongoose';
-import { CONSTANT_KAFKA } from '../../common/constants/constantsKafka';
+import { CONSTANT_KAFKA } from '../../common/kafka/constants/constantsKafka';
 import { userService } from '../services/userService';
 import { userProducer } from '../producers/userProducer';
 import { AlreadyExistException } from '../../common/exceptions/AlreadyExistsException';
@@ -11,6 +10,7 @@ import { ITokenPayload } from '../interfaces/IToken';
 import { jwtService } from '../services/jwtService';
 import { compare } from 'bcrypt';
 import { UnauthorizedException } from '../../common/exceptions/UnauthorizedException';
+import { eventService } from '../../common/kafka/events/services/eventService';
 
 export const userController = {
   registerUser: async (userData: IUserCreate): Promise<IUserResponse> => {
@@ -80,7 +80,8 @@ export const userController = {
 
     const isPasswordValid = await compare(loginData.password, user.password);
 
-    if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
+    if (!isPasswordValid)
+      throw new UnauthorizedException('Invalid credentials');
 
     const tokenPayload: ITokenPayload = {
       id: user.id,
