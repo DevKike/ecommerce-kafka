@@ -27,7 +27,9 @@ export class Application {
     try {
       validateEnv(envSchema);
       await this.initDatabase();
+      await runSeeder();
       await this.initProducers();
+      await this.initConsumers();
       this.initMiddlewares();
       this.initRoutes();
 
