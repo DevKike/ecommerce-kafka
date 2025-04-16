@@ -1,23 +1,20 @@
 import { products } from './productSeed';
 import { Logger } from '../../../utils/logger/Logger';
-import { productService } from '../services/productService';
 import { productController } from '../controllers/productController';
-
+import ProductModel from '../models/productModel';
 
 export const runSeeder = async () => {
   try {
+    const existingProducts = await ProductModel.find();
+    if (existingProducts.length > 0) {
+      Logger.info(`Seeder already ran, skipping...`);
+      return;
+    }
+
     Logger.info('Starting product seeder');
     for (const product of products) {
       try {
-        const existingProduct = await productService.findById(product.id);
-        if (existingProduct) {
-          Logger.info(`Product already exists: ${product.name}`);
-          continue;
-        }
-
-        const savedProduct = await productService.save(product);
-
-        await productController.createProductEvent(savedProduct);
+        await productController.createProductEvent(product);
       } catch (error) {
         Logger.error(`Error processing product: ${product.name}`, error);
       }

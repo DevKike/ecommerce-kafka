@@ -44,6 +44,7 @@ export const productController = {
         ],
       });
 
+      await productService.save(product);
       await eventService.save(productEvent);
     } catch (error) {
       Logger.error('Error creating product event', error);
