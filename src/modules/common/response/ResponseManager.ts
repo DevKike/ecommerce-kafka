@@ -12,8 +12,8 @@ export class ResponseManager {
   public static async manageResponse(
     promise: any,
     appResponse: Response,
-    message: string,
-    statusCode: HttpStatusCode
+    message: string = 'Success',
+    statusCode: HttpStatusCode = HttpStatusCode.OK
   ): Promise<Response> {
     try {
       const result = await promise;
@@ -30,21 +30,15 @@ export class ResponseManager {
   ): Promise<Response> {
     if (error instanceof BaseException) {
       if (error instanceof NotFoundException) {
-        return appResponse
-          .status(HttpStatusCode.NOT_FOUND)
-          .json({ message: error.message });
+        return appResponse.status(HttpStatusCode.NOT_FOUND).json({ message: error.message });
       }
 
       if (error instanceof AlreadyExistException) {
-        return appResponse
-          .status(HttpStatusCode.CONFLICT)
-          .json({ message: error.message });
+        return appResponse.status(HttpStatusCode.CONFLICT).json({ message: error.message });
       }
 
       if (error instanceof UnauthorizedException) {
-        return appResponse
-          .status(HttpStatusCode.UNAUTHORIZED)
-          .json({ message: error.message });
+        return appResponse.status(HttpStatusCode.UNAUTHORIZED).json({ message: error.message });
       }
       return appResponse
         .status(HttpStatusCode.INTERNAL_SERVER_ERROR)
