@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import { IEvent } from '../../../common/events/interfaces/IEvent';
-import { eventService } from '../../../common/services/eventService';
+import { IEvent } from '../../../common/kafka/events/interfaces/IEvent';
+import { eventService } from '../../../common/kafka/events/services/eventService';
 import { Templates } from '../../../common/templates/enums/templatesEnum';
 import { mailerService } from '../services/mailerService';
-import { CONSTANT_KAFKA } from '../../../common/constants/constantsKafka';
+import { CONSTANT_KAFKA } from '../../../common/kafka/constants/constantsKafka';
 
 export const mailerController = {
   sendWelcomeEmail: async (email: string, context?: Record<string, any>) => {

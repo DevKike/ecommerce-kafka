@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { injectable } from 'inversify';
-import { ResponseManager } from '../../common/response/ResponseManager';
+import { ResponseManager } from '../../common/express/response/ResponseManager';
 import { productController } from '../controllers/productController';
 import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 
