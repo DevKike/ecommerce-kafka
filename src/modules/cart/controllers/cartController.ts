@@ -8,18 +8,24 @@ import { Logger } from '../../../utils/logger/Logger';
 import { eventService } from '../../common/kafka/events/services/eventService';
 import { productService } from '../../products/services/productService';
 import { NotFoundException } from '../../common/exceptions/NotFoundException';
+import { IUser } from '../../auth/models/IUser';
 
 export const cartController = {
-  createCartUpdateEvent: async (cartItem: ICartItemCreate): Promise<void> => {
+  createCartUpdateEvent: async (
+    userId: IUser['id'],
+    cartItem: ICartItemCreate
+  ): Promise<void> => {
     try {
       const product = await productService.findById(cartItem.productId);
       if (!product) {
-        throw new NotFoundException(`Product with ID ${cartItem.productId} not found`);
+        throw new NotFoundException(
+          `Product with ID ${cartItem.productId} not found`
+        );
       }
 
-      const savedCartItem = await cartService.addToCart(cartItem);
+      const savedCartItem = await cartService.addToCart(userId, cartItem);
 
-      const totalItems = await cartService.getTotalCartItems(cartItem.userId);
+      const totalItems = await cartService.getTotalCartItems(userId);
 
       const eventId = new mongoose.Types.ObjectId();
       const cartId = new mongoose.Types.ObjectId();
@@ -30,7 +36,7 @@ export const cartController = {
         source: CONSTANT_KAFKA.SOURCE.CART_SERVICE,
         topic: CONSTANT_KAFKA.TOPIC.CART.UPDATED,
         payload: {
-          userId: cartItem.userId,
+          userId: userId,
           productId: cartItem.productId,
           quantity: cartItem.quantity,
           status: 'ADD',
@@ -59,7 +65,10 @@ export const cartController = {
     }
   },
 
-  createCartRemoveEvent: async (userId: string, productId: string): Promise<void> => {
+  createCartRemoveEvent: async (
+    userId: string,
+    productId: string
+  ): Promise<void> => {
     try {
       await cartService.removeFromCart(userId, productId);
 
@@ -142,8 +151,11 @@ export const cartController = {
     }
   },
 
-  addToCart: async (cartItemData: ICartItemCreate): Promise<void> => {
-    await cartController.createCartUpdateEvent(cartItemData);
+  addToCart: async (
+    userId: IUser['id'],
+    cartItemData: ICartItemCreate
+  ): Promise<void> => {
+    await cartController.createCartUpdateEvent(userId, cartItemData);
   },
 
   getCart: async (userId: string) => {
@@ -154,7 +166,11 @@ export const cartController = {
     await cartController.createCartRemoveEvent(userId, productId);
   },
 
-  updateQuantity: async (userId: string, productId: string, quantity: number): Promise<void> => {
+  updateQuantity: async (
+    userId: string,
+    productId: string,
+    quantity: number
+  ): Promise<void> => {
     await cartService.updateCartItemQuantity(userId, productId, quantity);
 
     const totalItems = await cartService.getTotalCartItems(userId);
