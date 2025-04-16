@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { injectable } from 'inversify';
-import { ResponseManager } from '../../common/response/ResponseManager';
+import { ResponseManager } from '../../common/express/response/ResponseManager';
 import { cartController } from '../controllers/cartController';
 import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 import { middlewareSchema } from '../../../middleware/middlewareSchema';

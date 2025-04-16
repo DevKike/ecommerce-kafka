@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 import { ICartItemCreate } from '../models/ICartItem';
 import { cartService } from '../services/cartService';
-import { IEvent } from '../../common/events/interfaces/IEvent';
-import { CONSTANT_KAFKA } from '../../common/constants/constantsKafka';
+import { IEvent } from '../../common/kafka/events/interfaces/IEvent';
+import { CONSTANT_KAFKA } from '../../common/kafka/constants/constantsKafka';
 import { cartProducer } from '../producers/cartProducer';
 import { Logger } from '../../../utils/logger/Logger';
-import { eventService } from '../../common/services/eventService';
+import { eventService } from '../../common/kafka/events/services/eventService';
 import { productService } from '../../products/services/productService';
 import { NotFoundException } from '../../common/exceptions/NotFoundException';
 

@@ -1,5 +1,5 @@
 import { kafka } from '../../../core/kafka/kafkaClient';
-import { CONSTANT_KAFKA } from '../../common/constants/constantsKafka';
+import { CONSTANT_KAFKA } from '../../common/kafka/constants/constantsKafka';
 import { Logger } from '../../../utils/logger/Logger';
 
 export const cartConsumer = kafka.consumer({
