@@ -10,6 +10,7 @@ import { validateEnv } from '../core/environments/validation/validateEnv';
 import { envSchema } from '../core/environments/validation/envSchema';
 import { runSeeder } from '../modules/products/seed/runSeeder';
 import { productProducer } from '../modules/products/producers/productProducer';
+import { connectNotificationsConsumer } from '../modules/notifications/consumer/notificationConsumer';
 
 @injectable()
 export class Application {
@@ -17,9 +18,7 @@ export class Application {
   private readonly PORT = CONSTANT_CONFIG.ENVIRONMENT.PORT;
   private readonly mongoConnection: MongoConnection;
 
-  constructor(
-    @inject(TYPES.RouterManger) private readonly routerManager: RouterManager
-  ) {
+  constructor(@inject(TYPES.RouterManger) private readonly routerManager: RouterManager) {
     this.app = express();
     this.mongoConnection = MongoConnection.getInstance();
   }
@@ -28,8 +27,9 @@ export class Application {
     try {
       validateEnv(envSchema);
       await this.initDatabase();
-      await this.initProducers();
       await runSeeder();
+      await this.initProducers();
+      await this.initConsumers();
       this.initMiddlewares();
       this.initRoutes();
 
@@ -59,6 +59,11 @@ export class Application {
     await userProducer.connect();
     await productProducer.connect();
     Logger.info('Producers initialized');
+  }
+
+  private async initConsumers(): Promise<void> {
+    await connectNotificationsConsumer();
+    Logger.info('Consumers initialized');
   }
 
   private async startServer(): Promise<void> {
