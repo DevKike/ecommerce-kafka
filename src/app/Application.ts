@@ -2,7 +2,7 @@ import { CONSTANT_CONFIG } from '../core/constants/constantsConfig';
 import express, { Application as App } from 'express';
 import { MongoConnection } from '../core/db/MongoConnection';
 import { Logger } from '../utils/logger/Logger';
-import { RouterManager } from '../modules/common/router/RouterManager';
+import { RouterManager } from '../modules/common/express/router/RouterManager';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../core/inversify/types/inversifyTypes';
 import { userProducer } from '../modules/auth/producers/userProducer';
@@ -12,6 +12,7 @@ import { runSeeder } from '../modules/products/seed/runSeeder';
 import { productProducer } from '../modules/products/producers/productProducer';
 import { connectNotificationsConsumer } from '../modules/notifications/consumer/notificationConsumer';
 import { cartProducer } from '../modules/cart/producers/cartProducer';
+import { connectCartConsumer } from '../modules/cart/consumers/cartConsumer';
 
 @injectable()
 export class Application {
@@ -19,7 +20,9 @@ export class Application {
   private readonly PORT = CONSTANT_CONFIG.ENVIRONMENT.PORT;
   private readonly mongoConnection: MongoConnection;
 
-  constructor(@inject(TYPES.RouterManger) private readonly routerManager: RouterManager) {
+  constructor(
+    @inject(TYPES.RouterManger) private readonly routerManager: RouterManager
+  ) {
     this.app = express();
     this.mongoConnection = MongoConnection.getInstance();
   }
@@ -65,6 +68,7 @@ export class Application {
 
   private async initConsumers(): Promise<void> {
     await connectNotificationsConsumer();
+    await connectCartConsumer();
     Logger.info('Consumers initialized');
   }
 

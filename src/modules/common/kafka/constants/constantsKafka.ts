@@ -21,4 +21,4 @@ export const CONSTANT_KAFKA = {
       EMAIL: 'email_notification',
     },
   },
-};
+}

@@ -1,9 +1,9 @@
 import { Application } from 'express';
-import { UserRouter } from '../../auth/routes/UserRouter';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../../../core/inversify/types/inversifyTypes';
-import { ProductRouter } from '../../products/routes/ProductRouter';
-import { CartRouter } from '../../cart/routes/CartRouter';
+import { TYPES } from '../../../../core/inversify/types/inversifyTypes';
+import { UserRouter } from '../../../auth/routes/UserRouter';
+import { ProductRouter } from '../../../products/routes/ProductRouter';
+import { CartRouter } from '../../../cart/routes/CartRouter';
 
 @injectable()
 export class RouterManager {
