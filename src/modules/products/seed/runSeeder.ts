@@ -1,6 +1,7 @@
 import { products } from './productSeed';
 import { Logger } from '../../../utils/logger/Logger';
 import { productService } from '../services/productService';
+import { createProductEvent } from '../controllers/productController';
 
 export const runSeeder = async () => {
   try {
@@ -13,7 +14,9 @@ export const runSeeder = async () => {
           continue;
         }
 
-        await productService.save(product);
+        const savedProduct = await productService.save(product);
+
+        await createProductEvent(savedProduct);
       } catch (error) {
         Logger.error(`Error processing product: ${product.name}`, error);
       }
