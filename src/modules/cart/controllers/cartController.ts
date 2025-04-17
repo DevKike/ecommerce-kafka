@@ -158,6 +158,36 @@ export const cartController = {
   },
 
   getCart: async (userId: IUser['id']): Promise<ICartItem[]> => {
+    const eventId = new mongoose.Types.ObjectId();
+
+    const cartEvent: IEvent = {
+      id: `evt_${eventId.toString()}`,
+      timestamp: new Date().toISOString(),
+      source: CONSTANT_KAFKA.SOURCE.CART_SERVICE,
+      topic: CONSTANT_KAFKA.TOPIC.CART.CHECKOUT,
+      payload: {
+        userId,
+        status: 'CHECKOUT',
+      },
+      snapshot: {
+        userId,
+        status: 'CHECKOUT',
+        fetchAt: new Date().toISOString(),
+      },
+    };
+
+    await cartProducer.send({
+      topic: CONSTANT_KAFKA.TOPIC.CART.CHECKOUT,
+      messages: [
+        {
+          key: cartEvent.id,
+          value: JSON.stringify(cartEvent),
+        },
+      ],
+    });
+
+    await eventService.save(cartEvent);
+
     const itemsOnCart = await cartService.getCartByUserId(userId);
 
     const items = itemsOnCart.map((item) => {
