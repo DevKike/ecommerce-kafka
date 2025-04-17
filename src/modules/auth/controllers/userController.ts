@@ -102,7 +102,7 @@ export const userController = {
         email: user.email,
       },
       snapshot: {
-        id: user.id,
+        userId: user.id,
         status: 'LOGGED_IN',
       },
     };
