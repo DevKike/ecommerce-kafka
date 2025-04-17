@@ -37,9 +37,10 @@ export const cartService = {
   getCartByUserId: async (userId: string): Promise<ICartItem[]> => {
     try {
       const cartItems = await CartItemModel.find({ userId });
-      if (!cartItems || cartItems.length === 0) {
-        return [];
-      }
+
+      if (!cartItems || cartItems.length === 0)
+        throw new NotFoundException('No items found in cart');
+
       return cartItems;
     } catch (error) {
       throw error;
@@ -55,10 +56,11 @@ export const cartService = {
     }
   },
 
-  removeFromCart: async (userId: string, productId: string): Promise<void> => {
+   removeFromCart: async (userId: string, productId: string): Promise<void> => {
     try {
       const existingItem = await CartItemModel.findOne({ userId, productId });
 
+      console.log('🚀 ~ removeFromCart: ~ existingItem:', existingItem);
       if (!existingItem) {
         throw new NotFoundException(
           `Item not found in cart for user ${userId}, nothing to remove`
