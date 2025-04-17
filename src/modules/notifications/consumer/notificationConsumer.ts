@@ -37,7 +37,7 @@ export const connectNotificationsConsumer = async () => {
               break;
             case CONSTANT_KAFKA.TOPIC.CART.REMOVED:
               await mailerController.sendCartRemovalNotification(
-                eventData.payload.email
+                eventData.payload.userId
               );
               break;
             default:

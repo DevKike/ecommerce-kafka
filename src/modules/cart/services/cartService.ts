@@ -60,7 +60,6 @@ export const cartService = {
     try {
       const existingItem = await CartItemModel.findOne({ userId, productId });
 
-      console.log('🚀 ~ removeFromCart: ~ existingItem:', existingItem);
       if (!existingItem) {
         throw new NotFoundException(
           `Item not found in cart for user ${userId}, nothing to remove`
