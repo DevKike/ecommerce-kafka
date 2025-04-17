@@ -4,6 +4,9 @@ import { eventService } from '../../../common/kafka/events/services/eventService
 import { Templates } from '../../../common/templates/enums/templatesEnum';
 import { mailerService } from '../services/mailerService';
 import { CONSTANT_KAFKA } from '../../../common/kafka/constants/constantsKafka';
+import { IUser } from '../../../auth/models/IUser';
+import { userService } from '../../../auth/services/userService';
+import { NotFoundException } from '../../../common/exceptions/NotFoundException';
 
 export const mailerController = {
   sendWelcomeEmail: async (email: string, context?: Record<string, any>) => {
@@ -43,12 +46,16 @@ export const mailerController = {
   },
 
   sendCartRemovalNotification: async (
-    email: string,
+    userId: IUser['id'],
     context?: Record<string, any>
   ) => {
+    const user = await userService.findById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
     try {
       await mailerService.sendMail(
-        email,
+        user.email,
         'Cart removal notification',
         Templates.CART_REMOVAL
       );
@@ -61,11 +68,9 @@ export const mailerController = {
         source: CONSTANT_KAFKA.SOURCE.NOTIFICATION_SERVICE,
         topic: CONSTANT_KAFKA.TOPIC.NOTIFICATION.EMAIL,
         payload: {
-          to: email,
+          to: user.email,
           subject: `Cart removal notification`,
-          content: `Cart removal notification, ${
-            context!.name
-          }, Cart removal notification`,
+          content: `Cart removal notification`,
         },
         snapshot: {
           status: 'SENT',

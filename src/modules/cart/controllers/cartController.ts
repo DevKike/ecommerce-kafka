@@ -220,7 +220,7 @@ export const cartController = {
       };
 
       await cartProducer.send({
-        topic: CONSTANT_KAFKA.TOPIC.CART.UPDATED,
+        topic: CONSTANT_KAFKA.TOPIC.CART.REMOVED,
         messages: [
           {
             key: cartEvent.id,
