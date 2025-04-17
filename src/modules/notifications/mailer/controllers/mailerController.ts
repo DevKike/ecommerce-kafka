@@ -57,7 +57,8 @@ export const mailerController = {
       await mailerService.sendMail(
         user.email,
         'Cart removal notification',
-        Templates.CART_REMOVAL
+        Templates.CART_REMOVAL,
+        { productName: context!.productName }
       );
 
       const eventId = new mongoose.Types.ObjectId();

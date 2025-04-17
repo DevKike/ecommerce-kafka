@@ -195,9 +195,12 @@ export const cartController = {
     productId: string
   ): Promise<void> => {
     try {
+      const product = await productService.findById(productId);
+
       await cartService.removeFromCart(userId, productId);
 
       const totalItems = await cartService.getTotalCartItems(userId);
+
 
       const eventId = new mongoose.Types.ObjectId();
       const cartId = new mongoose.Types.ObjectId();
@@ -210,6 +213,7 @@ export const cartController = {
         payload: {
           userId: userId,
           productId: productId,
+          productName: product?.name,
           status: 'REMOVE',
         },
         snapshot: {
