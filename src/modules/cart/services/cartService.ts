@@ -3,6 +3,7 @@ import { ICartItem, ICartItemCreate } from '../models/ICartItem';
 import CartItemModel from '../models/cartItemModel';
 import { NotFoundException } from '../../common/exceptions/NotFoundException';
 import { IUser } from '../../auth/models/IUser';
+import { Logger } from '../../../utils/logger/Logger';
 
 export const cartService = {
   addToCart: async (
@@ -57,10 +58,17 @@ export const cartService = {
 
   removeFromCart: async (userId: string, productId: string): Promise<void> => {
     try {
-      const result = await CartItemModel.deleteOne({ userId, productId });
-      if (result.deletedCount === 0) {
-        throw new NotFoundException('Item not found in cart');
+      
+      const existingItem = await CartItemModel.findOne({ userId, productId });
+      
+    
+      if (!existingItem) {
+        Logger.info(`Item not found in cart for user ${userId}, nothing to remove`);
+        return;
       }
+      
+      
+      await CartItemModel.deleteOne({ userId, productId });
     } catch (error) {
       throw error;
     }
@@ -84,11 +92,5 @@ export const cartService = {
     }
   },
 
-  clearCart: async (userId: string): Promise<void> => {
-    try {
-      await CartItemModel.deleteMany({ userId });
-    } catch (error) {
-      throw error;
-    }
-  },
+  
 };

@@ -23,8 +23,6 @@ export const cartController = {
         );
       }
 
-      const savedCartItem = await cartService.addToCart(userId, cartItem);
-
       const totalItems = await cartService.getTotalCartItems(userId);
 
       const eventId = new mongoose.Types.ObjectId();
@@ -64,8 +62,21 @@ export const cartController = {
     }
   },
 
-  createCartRemoveEvent: async (
-    userId: string,
+  
+
+  addToCart: async (
+    userId: IUser['id'],
+    cartItemData: ICartItemCreate
+  ): Promise<void> => {
+    await cartController.createCartUpdateEvent(userId, cartItemData);
+  },
+
+  getCart: async (userId: string) => {
+    return await cartService.getCartByUserId(userId);
+  },
+
+  removeFromCart: async (
+    userId: IUser['id'],
     productId: string
   ): Promise<void> => {
     try {
@@ -80,7 +91,7 @@ export const cartController = {
         id: `evt_${eventId.toString()}`,
         timestamp: new Date().toISOString(),
         source: CONSTANT_KAFKA.SOURCE.CART_SERVICE,
-        topic: CONSTANT_KAFKA.TOPIC.CART.UPDATED,
+        topic: CONSTANT_KAFKA.TOPIC.CART.REMOVED,
         payload: {
           userId: userId,
           productId: productId,
@@ -105,64 +116,9 @@ export const cartController = {
 
       await eventService.save(cartEvent);
     } catch (error) {
-      Logger.error('Error creating cart remove event', error);
+      Logger.error('Error removing item from cart', error);
       throw error;
     }
-  },
-
-  createCartClearEvent: async (userId: string): Promise<void> => {
-    try {
-      await cartService.clearCart(userId);
-
-      const eventId = new mongoose.Types.ObjectId();
-      const cartId = new mongoose.Types.ObjectId();
-
-      const cartEvent: IEvent = {
-        id: `evt_${eventId.toString()}`,
-        timestamp: new Date().toISOString(),
-        source: CONSTANT_KAFKA.SOURCE.CART_SERVICE,
-        topic: CONSTANT_KAFKA.TOPIC.CART.UPDATED,
-        payload: {
-          userId: userId,
-          status: 'CLEAR',
-        },
-        snapshot: {
-          cartId: `cart_${cartId.toString()}`,
-          totalItems: 0,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-
-      await cartProducer.send({
-        topic: CONSTANT_KAFKA.TOPIC.CART.UPDATED,
-        messages: [
-          {
-            key: cartEvent.id,
-            value: JSON.stringify(cartEvent),
-          },
-        ],
-      });
-
-      await eventService.save(cartEvent);
-    } catch (error) {
-      Logger.error('Error creating cart clear event', error);
-      throw error;
-    }
-  },
-
-  addToCart: async (
-    userId: IUser['id'],
-    cartItemData: ICartItemCreate
-  ): Promise<void> => {
-    await cartController.createCartUpdateEvent(userId, cartItemData);
-  },
-
-  getCart: async (userId: string) => {
-    return await cartService.getCartByUserId(userId);
-  },
-
-  removeFromCart: async (userId: string, productId: string): Promise<void> => {
-    await cartController.createCartRemoveEvent(userId, productId);
   },
 
   updateQuantity: async (
@@ -203,7 +159,5 @@ export const cartController = {
     await eventService.save(cartEvent);
   },
 
-  clearCart: async (userId: string): Promise<void> => {
-    await cartController.createCartClearEvent(userId);
-  },
+  
 };

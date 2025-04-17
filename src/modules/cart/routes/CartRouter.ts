@@ -45,12 +45,12 @@ export class CartRouter {
       }
     );
 
-    this.router.delete('/items/:userId/:productId', async (req, res) => {
+    this.router.delete('/items/:productId', verifyAuthMiddleware(), async (req: IRequest, res: Response) => {
       await ResponseManager.manageResponse(
-        cartController.removeFromCart(req.params.userId, req.params.productId),
-        res,
-        'Item removed from cart successfully',
-        HttpStatusCode.OK
+      cartController.removeFromCart(req.user?.sub!, req.params.productId),
+      res,
+      'Item removed from cart successfully',
+      HttpStatusCode.OK
       );
     });
   }
