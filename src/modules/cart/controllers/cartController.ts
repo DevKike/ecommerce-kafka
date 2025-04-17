@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { ICartItemCreate } from '../models/ICartItem';
+import { ICartItem, ICartItemCreate } from '../models/ICartItem';
 import { cartService } from '../services/cartService';
 import { IEvent } from '../../common/kafka/events/interfaces/IEvent';
 import { CONSTANT_KAFKA } from '../../common/kafka/constants/constantsKafka';
@@ -109,8 +109,56 @@ export const cartController = {
     await cartController.createCartUpdateEvent(userId, cartItemData);
   },
 
-  getCart: async (userId: string) => {
-    return await cartService.getCartByUserId(userId);
+  getCart: async (userId: IUser['id']): Promise<ICartItem[]> => {
+    const eventId = new mongoose.Types.ObjectId();
+
+    const cartEvent: IEvent = {
+      id: `evt_${eventId.toString()}`,
+      timestamp: new Date().toISOString(),
+      source: CONSTANT_KAFKA.SOURCE.CART_SERVICE,
+      topic: CONSTANT_KAFKA.TOPIC.CART.CHECKOUT,
+      payload: {
+        userId,
+        status: 'CHECKOUT',
+      },
+      snapshot: {
+        userId,
+        status: 'CHECKOUT',
+        fetchAt: new Date().toISOString(),
+      },
+    };
+
+    await cartProducer.send({
+      topic: CONSTANT_KAFKA.TOPIC.CART.CHECKOUT,
+      messages: [
+        {
+          key: cartEvent.id,
+          value: JSON.stringify(cartEvent),
+        },
+      ],
+    });
+
+    await eventService.save(cartEvent);
+
+    const itemsOnCart = await cartService.getCartByUserId(userId);
+
+    const items: ICartItem[] = await Promise.all(
+      itemsOnCart.map(async (item) => {
+        const plainItem = JSON.parse(JSON.stringify(item));
+
+        const product = await productService.findById(plainItem.productId);
+
+        const plainItemWithProductName = {
+          ...plainItem,
+          productName: product?.name,
+        };
+
+        delete plainItemWithProductName._id;
+        return plainItemWithProductName;
+      })
+    );
+
+    return items;
   },
 
   removeFromCart: async (
@@ -196,6 +244,4 @@ export const cartController = {
 
     await eventService.save(cartEvent);
   },
-
-  
 };
