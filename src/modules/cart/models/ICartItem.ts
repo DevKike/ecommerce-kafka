@@ -1,8 +1,8 @@
-import e from 'express';
 import { IUser } from '../../auth/models/IUser';
 
 export interface ICartItem {
   id: string;
+  productName: string;
   productId: string;
   quantity: number;
   addedAt: string;
