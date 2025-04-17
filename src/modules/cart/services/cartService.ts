@@ -92,5 +92,11 @@ export const cartService = {
     }
   },
 
-  
+  clearCart: async (userId: string): Promise<void> => {
+    try {
+      await CartItemModel.deleteMany({ userId });
+    } catch (error) {
+      throw error;
+    }
+  },
 };

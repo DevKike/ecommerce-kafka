@@ -4,7 +4,7 @@ import { ResponseManager } from '../../common/express/response/ResponseManager';
 import { cartController } from '../controllers/cartController';
 import { HttpStatusCode } from '../../../core/enums/HttpStatusCode';
 import { middlewareSchema } from '../../../middleware/middlewareSchema';
-import { addToCartSchema, updateCartItemSchema } from '../schemas/cartSchema';
+import { addToCartSchema } from '../schemas/cartSchema';
 import { IRequest } from '../../common/express/interfaces/IRequest';
 import { verifyAuthMiddleware } from '../../../middleware/verifyAuthMiddleware';
 
@@ -17,6 +17,18 @@ export class CartRouter {
   }
 
   initRoutes() {
+    this.router.get(
+      '/items',
+      verifyAuthMiddleware(),
+      async (req: IRequest, res: Response) => {
+        await ResponseManager.manageResponse(
+          cartController.getCart(req.user?.sub!),
+          res,
+          'Cart items retrieved successfully'
+        );
+      }
+    );
+
     this.router.post(
       '/items',
       verifyAuthMiddleware(),
@@ -27,20 +39,6 @@ export class CartRouter {
           res,
           'Product added to cart successfully',
           HttpStatusCode.CREATED
-        );
-      }
-    );
-
-    this.router.put(
-      '/items',
-      middlewareSchema(updateCartItemSchema),
-      async (req, res) => {
-        const { userId, productId, quantity } = req.body;
-        await ResponseManager.manageResponse(
-          cartController.updateQuantity(userId, productId, quantity),
-          res,
-          'Cart item updated successfully',
-          HttpStatusCode.OK
         );
       }
     );

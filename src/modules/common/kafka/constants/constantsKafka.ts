@@ -15,6 +15,7 @@ export const CONSTANT_KAFKA = {
       CREATED: 'product_created',
     },
     CART: {
+      CHECKOUT: 'cart_checkout',
       UPDATED: 'cart_updates',
       REMOVED: 'cart-removals',
     },
@@ -22,4 +23,4 @@ export const CONSTANT_KAFKA = {
       EMAIL: 'email_notification',
     },
   },
-}
+};

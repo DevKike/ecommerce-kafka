@@ -62,7 +62,45 @@ export const cartController = {
     }
   },
 
-  
+  createCartClearEvent: async (userId: string): Promise<void> => {
+    try {
+      await cartService.clearCart(userId);
+
+      const eventId = new mongoose.Types.ObjectId();
+      const cartId = new mongoose.Types.ObjectId();
+
+      const cartEvent: IEvent = {
+        id: `evt_${eventId.toString()}`,
+        timestamp: new Date().toISOString(),
+        source: CONSTANT_KAFKA.SOURCE.CART_SERVICE,
+        topic: CONSTANT_KAFKA.TOPIC.CART.UPDATED,
+        payload: {
+          userId: userId,
+          status: 'CLEAR',
+        },
+        snapshot: {
+          cartId: `cart_${cartId.toString()}`,
+          totalItems: 0,
+          updatedAt: new Date().toISOString(),
+        },
+      };
+
+      await cartProducer.send({
+        topic: CONSTANT_KAFKA.TOPIC.CART.UPDATED,
+        messages: [
+          {
+            key: cartEvent.id,
+            value: JSON.stringify(cartEvent),
+          },
+        ],
+      });
+
+      await eventService.save(cartEvent);
+    } catch (error) {
+      Logger.error('Error creating cart clear event', error);
+      throw error;
+    }
+  },
 
   addToCart: async (
     userId: IUser['id'],
@@ -91,7 +129,7 @@ export const cartController = {
         id: `evt_${eventId.toString()}`,
         timestamp: new Date().toISOString(),
         source: CONSTANT_KAFKA.SOURCE.CART_SERVICE,
-        topic: CONSTANT_KAFKA.TOPIC.CART.REMOVED,
+        topic: CONSTANT_KAFKA.TOPIC.CART.UPDATED,
         payload: {
           userId: userId,
           productId: productId,
