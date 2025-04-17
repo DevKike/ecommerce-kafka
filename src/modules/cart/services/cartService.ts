@@ -22,7 +22,7 @@ export const cartService = {
 
       const id = new mongoose.Types.ObjectId().toString();
       const newCartItem = new CartItemModel({
-        id: `cart_item_${id}`,
+        id,
         productId: cartItemData.productId,
         quantity: cartItemData.quantity,
         addedAt: new Date().toISOString(),
