@@ -12,6 +12,7 @@ import { runSeeder } from '../modules/products/seed/runSeeder';
 import { productProducer } from '../modules/products/producers/productProducer';
 import { connectNotificationsConsumer } from '../modules/notifications/consumer/notificationConsumer';
 import { paymentProducer } from '../modules/payments/producers/paymentProducer';
+import { invoiceProducer } from '../modules/payments/producers/invoiceProducer';
 
 @injectable()
 export class Application {
@@ -62,6 +63,7 @@ export class Application {
     await userProducer.connect();
     await productProducer.connect();
     await paymentProducer.connect();
+    await invoiceProducer.connect();
     Logger.info('Producers initialized');
   }
 
