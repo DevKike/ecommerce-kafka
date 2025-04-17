@@ -14,6 +14,7 @@ import { connectNotificationsConsumer } from '../modules/notifications/consumer/
 import { paymentProducer } from '../modules/payments/producers/paymentProducer';
 import { invoiceProducer } from '../modules/payments/producers/invoiceProducer';
 import { cartProducer } from '../modules/cart/producers/cartProducer';
+import { connectInvoiceConsumer } from '../modules/payments/consumer/invoiceConsumer';
 
 @injectable()
 export class Application {
@@ -71,6 +72,7 @@ export class Application {
 
   private async initConsumers(): Promise<void> {
     await connectNotificationsConsumer();
+    await connectInvoiceConsumer();
     Logger.info('Consumers initialized');
   }
 
