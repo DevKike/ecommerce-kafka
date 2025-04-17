@@ -106,6 +106,8 @@ export const cartController = {
     userId: IUser['id'],
     cartItemData: ICartItemCreate
   ): Promise<void> => {
+    await cartService.addToCart(userId, cartItemData);
+
     await cartController.createCartUpdateEvent(userId, cartItemData);
   },
 
