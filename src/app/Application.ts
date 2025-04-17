@@ -12,7 +12,6 @@ import { runSeeder } from '../modules/products/seed/runSeeder';
 import { productProducer } from '../modules/products/producers/productProducer';
 import { connectNotificationsConsumer } from '../modules/notifications/consumer/notificationConsumer';
 import { cartProducer } from '../modules/cart/producers/cartProducer';
-import { connectCartConsumer } from '../modules/cart/consumers/cartConsumer';
 
 @injectable()
 export class Application {
@@ -68,7 +67,6 @@ export class Application {
 
   private async initConsumers(): Promise<void> {
     await connectNotificationsConsumer();
-    await connectCartConsumer();
     Logger.info('Consumers initialized');
   }
 
