@@ -131,7 +131,7 @@ export const cartController = {
         id: `evt_${eventId.toString()}`,
         timestamp: new Date().toISOString(),
         source: CONSTANT_KAFKA.SOURCE.CART_SERVICE,
-        topic: CONSTANT_KAFKA.TOPIC.CART.UPDATED,
+        topic: CONSTANT_KAFKA.TOPIC.CART.REMOVED,
         payload: {
           userId: userId,
           productId: productId,
