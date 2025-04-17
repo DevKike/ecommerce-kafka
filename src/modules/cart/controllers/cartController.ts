@@ -204,7 +204,6 @@ export const cartController = {
 
       await eventService.save(cartEvent);
     } catch (error) {
-      Logger.error('Error removing item from cart', error);
       throw error;
     }
   },
