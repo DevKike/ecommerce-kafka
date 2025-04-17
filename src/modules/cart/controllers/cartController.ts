@@ -60,7 +60,6 @@ export const cartController = {
 
       await eventService.save(cartEvent);
     } catch (error) {
-      Logger.error('Error creating cart update event', error);
       throw error;
     }
   },
