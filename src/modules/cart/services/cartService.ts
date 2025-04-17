@@ -1,47 +1,73 @@
 import mongoose from 'mongoose';
-import { ICartItem, ICartItemCreate } from '../models/ICartItem';
-import CartItemModel from '../models/cartItemModel';
+import { ICart, ICartAddProduct, ICartProduct } from '../models/ICart';
+import CartModel from '../models/cartModel';
 import { NotFoundException } from '../../common/exceptions/NotFoundException';
 import { IUser } from '../../auth/models/IUser';
+import { Logger } from '../../../utils/logger/Logger';
 
 export const cartService = {
   addToCart: async (
     userId: IUser['id'],
-    cartItemData: ICartItemCreate
-  ): Promise<ICartItem> => {
+    cartItemData: ICartAddProduct
+  ): Promise<ICart> => {
     try {
-      const existingItem = await CartItemModel.findOne({
-        userId: userId,
-        productId: cartItemData.productId,
-      });
+      let cart = await CartModel.findOne({ userId });
 
-      if (existingItem) {
-        existingItem.quantity += cartItemData.quantity;
-        return await existingItem.save();
+      const now = new Date().toISOString();
+
+      if (!cart) {
+        Logger.debug(`Creando nuevo carrito para el usuario: ${userId}`);
+        const id = new mongoose.Types.ObjectId().toString();
+        cart = new CartModel({
+          id,
+          userId,
+          products: [],
+          updatedAt: now,
+          createdAt: now,
+        });
       }
 
-      const id = new mongoose.Types.ObjectId().toString();
-      const newCartItem = new CartItemModel({
-        id,
-        productId: cartItemData.productId,
-        quantity: cartItemData.quantity,
-        addedAt: new Date().toISOString(),
-        userId,
-      });
-      return await newCartItem.save();
+      const existingProductIndex = cart.products.findIndex(
+        (product) => product.productId === cartItemData.productId
+      );
+
+      if (existingProductIndex >= 0) {
+        Logger.debug(
+          `Actualizando cantidad de producto existente en el carrito. ProductId: ${cartItemData.productId}`
+        );
+        cart.products[existingProductIndex].quantity += cartItemData.quantity;
+      } else {
+        Logger.debug(
+          `Añadiendo nuevo producto al carrito. ProductId: ${cartItemData.productId}`
+        );
+        const newProduct: ICartProduct = {
+          productId: cartItemData.productId,
+          quantity: cartItemData.quantity,
+          addedAt: now,
+        };
+        cart.products.push(newProduct);
+      }
+
+      cart.updatedAt = now;
+
+      return await cart.save();
     } catch (error) {
+      Logger.error('Error al añadir producto al carrito:', error);
       throw error;
     }
   },
 
-  getCartByUserId: async (userId: string): Promise<ICartItem[]> => {
+  getCartByUserId: async (userId: string): Promise<ICart | null> => {
     try {
-      const cartItems = await CartItemModel.find({ userId });
+      const cart = await CartModel.findOne({ userId });
 
-      if (!cartItems || cartItems.length === 0)
-        throw new NotFoundException('No items found in cart');
+      if (!cart || cart.products.length === 0) {
+        throw new NotFoundException(
+          'No se encontraron productos en el carrito'
+        );
+      }
 
-      return cartItems;
+      return cart;
     } catch (error) {
       throw error;
     }
@@ -49,26 +75,42 @@ export const cartService = {
 
   getTotalCartItems: async (userId: string): Promise<number> => {
     try {
-      const cartItems = await CartItemModel.find({ userId });
-      return cartItems.reduce((total, item) => total + item.quantity, 0);
+      const cart = await CartModel.findOne({ userId });
+      if (!cart) return 0;
+
+      return cart.products.reduce(
+        (total, product) => total + product.quantity,
+        0
+      );
     } catch (error) {
       throw error;
     }
   },
 
-   removeFromCart: async (userId: string, productId: string): Promise<void> => {
+  removeFromCart: async (userId: string, productId: string): Promise<void> => {
     try {
-      const existingItem = await CartItemModel.findOne({ userId, productId });
+      const cart = await CartModel.findOne({ userId });
 
-      console.log('🚀 ~ removeFromCart: ~ existingItem:', existingItem);
-      if (!existingItem) {
+      if (!cart) {
         throw new NotFoundException(
-          `Item not found in cart for user ${userId}, nothing to remove`
+          `No se encontró el carrito para el usuario ${userId}`
         );
-        return;
       }
 
-      await CartItemModel.deleteOne({ userId, productId });
+      const productIndex = cart.products.findIndex(
+        (product) => product.productId === productId
+      );
+
+      if (productIndex === -1) {
+        throw new NotFoundException(
+          `Producto no encontrado en el carrito del usuario ${userId}`
+        );
+      }
+
+      cart.products.splice(productIndex, 1);
+      cart.updatedAt = new Date().toISOString();
+
+      await cart.save();
     } catch (error) {
       throw error;
     }
@@ -78,15 +120,25 @@ export const cartService = {
     userId: string,
     productId: string,
     quantity: number
-  ): Promise<ICartItem> => {
+  ): Promise<ICart> => {
     try {
-      const cartItem = await CartItemModel.findOne({ userId, productId });
-      if (!cartItem) {
-        throw new NotFoundException('Item not found in cart');
+      const cart = await CartModel.findOne({ userId });
+      if (!cart) {
+        throw new NotFoundException('No se encontró el carrito');
       }
 
-      cartItem.quantity = quantity;
-      return await cartItem.save();
+      const productIndex = cart.products.findIndex(
+        (product) => product.productId === productId
+      );
+
+      if (productIndex === -1) {
+        throw new NotFoundException('Producto no encontrado en el carrito');
+      }
+
+      cart.products[productIndex].quantity = quantity;
+      cart.updatedAt = new Date().toISOString();
+
+      return await cart.save();
     } catch (error) {
       throw error;
     }
@@ -94,7 +146,13 @@ export const cartService = {
 
   clearCart: async (userId: string): Promise<void> => {
     try {
-      await CartItemModel.deleteMany({ userId });
+      const cart = await CartModel.findOne({ userId });
+
+      if (cart) {
+        cart.products = [];
+        cart.updatedAt = new Date().toISOString();
+        await cart.save();
+      }
     } catch (error) {
       throw error;
     }

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { ICartItem, ICartItemCreate } from '../models/ICartItem';
+import { ICartAddProduct } from '../models/ICart';
 import { cartService } from '../services/cartService';
 import { IEvent } from '../../common/kafka/events/interfaces/IEvent';
 import { CONSTANT_KAFKA } from '../../common/kafka/constants/constantsKafka';
@@ -13,7 +13,7 @@ import { IUser } from '../../auth/models/IUser';
 export const cartController = {
   createCartUpdateEvent: async (
     userId: IUser['id'],
-    cartItem: ICartItemCreate
+    cartItem: ICartAddProduct
   ): Promise<void> => {
     try {
       const product = await productService.findById(cartItem.productId);
@@ -104,14 +104,20 @@ export const cartController = {
 
   addToCart: async (
     userId: IUser['id'],
-    cartItemData: ICartItemCreate
+    cartItemData: ICartAddProduct
   ): Promise<void> => {
-    await cartService.addToCart(userId, cartItemData);
+    const product = await productService.findById(cartItemData.productId);
+    if (!product) {
+      throw new NotFoundException(
+        `Producto con ID ${cartItemData.productId} no encontrado`
+      );
+    }
 
+    await cartService.addToCart(userId, cartItemData);
     await cartController.createCartUpdateEvent(userId, cartItemData);
   },
 
-  getCart: async (userId: IUser['id']): Promise<ICartItem[]> => {
+  getCart: async (userId: IUser['id']) => {
     const eventId = new mongoose.Types.ObjectId();
 
     const cartEvent: IEvent = {
@@ -142,25 +148,46 @@ export const cartController = {
 
     await eventService.save(cartEvent);
 
-    const itemsOnCart = await cartService.getCartByUserId(userId);
+    const cart = await cartService.getCartByUserId(userId);
 
-    const items: ICartItem[] = await Promise.all(
-      itemsOnCart.map(async (item) => {
-        const plainItem = JSON.parse(JSON.stringify(item));
+    if (cart) {
+      const cartObject = {
+        id: cart.id,
+        userId: cart.userId,
+        products: [] as {
+          productId: string;
+          quantity: number;
+          addedAt: string;
+          productName: string;
+        }[],
+        updatedAt: cart.updatedAt,
+        createdAt: cart.createdAt,
+      };
 
-        const product = await productService.findById(plainItem.productId);
+      // Obtener los nombres de los productos
+      const productsWithNames = await Promise.all(
+        cart.products.map(async (item) => {
+          // Extraer solo los datos necesarios del producto
+          const plainProduct = {
+            productId: item.productId,
+            quantity: item.quantity,
+            addedAt: item.addedAt,
+          };
 
-        const plainItemWithProductName = {
-          ...plainItem,
-          productName: product?.name,
-        };
+          const product = await productService.findById(item.productId);
 
-        delete plainItemWithProductName._id;
-        return plainItemWithProductName;
-      })
-    );
+          return {
+            ...plainProduct,
+            productName: product?.name || 'Producto no encontrado',
+          };
+        })
+      );
 
-    return items;
+      cartObject.products = productsWithNames;
+      return cartObject;
+    }
+
+    return null;
   },
 
   removeFromCart: async (
