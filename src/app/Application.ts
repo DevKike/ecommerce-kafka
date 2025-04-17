@@ -13,6 +13,7 @@ import { productProducer } from '../modules/products/producers/productProducer';
 import { connectNotificationsConsumer } from '../modules/notifications/consumer/notificationConsumer';
 import { paymentProducer } from '../modules/payments/producers/paymentProducer';
 import { invoiceProducer } from '../modules/payments/producers/invoiceProducer';
+import { cartProducer } from '../modules/cart/producers/cartProducer';
 
 @injectable()
 export class Application {
@@ -64,6 +65,7 @@ export class Application {
     await productProducer.connect();
     await paymentProducer.connect();
     await invoiceProducer.connect();
+    await cartProducer.connect();
     Logger.info('Producers initialized');
   }
 

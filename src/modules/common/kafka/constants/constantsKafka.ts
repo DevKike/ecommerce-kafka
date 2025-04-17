@@ -2,6 +2,7 @@ export const CONSTANT_KAFKA = {
   SOURCE: {
     USER_SERVICE: 'UserService',
     PRODUCT_SERVICE: 'ProductService',
+    CART_SERVICE: 'CartService',
     NOTIFICATION_SERVICE: 'NotificationService',
     PAYMENT_SERVICE: 'OrderService',
     BILLING_SERVICE: 'BillingService',
@@ -14,6 +15,11 @@ export const CONSTANT_KAFKA = {
     },
     PRODUCT: {
       CREATED: 'product_created',
+    },
+    CART: {
+      CHECKOUT: 'cart_checkout',
+      UPDATED: 'cart_updates',
+      REMOVED: 'cart-removals',
     },
     NOTIFICATION: {
       EMAIL: 'email_notification',

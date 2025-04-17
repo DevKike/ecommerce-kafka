@@ -6,6 +6,7 @@ import { Application } from '../../../app/Application';
 import { ProductRouter } from '../../../modules/products/routes/ProductRouter';
 import { PaymentRouter } from '../../../modules/payments/routes/PaymentRouter';
 import { FactureRouter } from '../../../modules/payments/routes/FactureRouter';
+import { CartRouter } from "../../../modules/cart/routes/CartRouter";
 
 const container = new Container();
 
@@ -14,6 +15,7 @@ container.bind(TYPES.UserRouter).to(UserRouter);
 container.bind(TYPES.ProductRouter).to(ProductRouter);
 container.bind(TYPES.PaymentRouter).to(PaymentRouter);
 container.bind(TYPES.FactureRouter).to(FactureRouter); 
+container.bind(TYPES.CartRouter).to(CartRouter);
 container.bind(TYPES.Application).to(Application);
 
 export { container };
