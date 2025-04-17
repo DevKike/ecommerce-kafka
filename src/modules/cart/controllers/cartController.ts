@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { ICartItemCreate } from '../models/ICartItem';
+import { ICartItem, ICartItemCreate } from '../models/ICartItem';
 import { cartService } from '../services/cartService';
 import { IEvent } from '../../common/kafka/events/interfaces/IEvent';
 import { CONSTANT_KAFKA } from '../../common/kafka/constants/constantsKafka';
@@ -157,8 +157,17 @@ export const cartController = {
     await cartController.createCartUpdateEvent(userId, cartItemData);
   },
 
-  getCart: async (userId: string) => {
-    return await cartService.getCartByUserId(userId);
+  getCart: async (userId: IUser['id']): Promise<ICartItem[]> => {
+    const itemsOnCart = await cartService.getCartByUserId(userId);
+
+    const items = itemsOnCart.map((item) => {
+      const plainItem = JSON.parse(JSON.stringify(item));
+
+      delete plainItem._id;
+      return plainItem;
+    });
+
+    return items;
   },
 
   removeFromCart: async (userId: string, productId: string): Promise<void> => {

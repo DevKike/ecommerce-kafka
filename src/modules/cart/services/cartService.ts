@@ -34,12 +34,13 @@ export const cartService = {
     }
   },
 
-  getCartByUserId: async (userId: string): Promise<ICartItem[]> => {
+  getCartByUserId: async (userId: IUser['id']): Promise<ICartItem[]> => {
     try {
       const cartItems = await CartItemModel.find({ userId });
-      if (!cartItems || cartItems.length === 0) {
-        return [];
-      }
+
+      if (!cartItems || cartItems.length === 0)
+        throw new NotFoundException('No items found in cart');
+
       return cartItems;
     } catch (error) {
       throw error;
