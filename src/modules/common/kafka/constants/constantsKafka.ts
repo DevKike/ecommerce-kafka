@@ -24,7 +24,7 @@ export const CONSTANT_KAFKA = {
     NOTIFICATION: {
       EMAIL: 'email_notification',
     },
-    PAYMENT: {
+    ORDER: {
       CREATED: 'order_created',
     },
     INVOICE: {
