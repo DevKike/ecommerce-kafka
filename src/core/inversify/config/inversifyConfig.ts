@@ -16,7 +16,6 @@ container.bind(TYPES.ProductRouter).to(ProductRouter);
 container.bind(TYPES.PaymentRouter).to(PaymentRouter);
 container.bind(TYPES.FactureRouter).to(FactureRouter); 
 container.bind(TYPES.CartRouter).to(CartRouter);
-container.bind(TYPES.CartRouter).to(CartRouter);
 container.bind(TYPES.Application).to(Application);
 
 export { container };

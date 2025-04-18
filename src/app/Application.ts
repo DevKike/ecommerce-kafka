@@ -15,7 +15,6 @@ import { paymentProducer } from '../modules/payments/producers/paymentProducer';
 import { invoiceProducer } from '../modules/payments/producers/invoiceProducer';
 import { cartProducer } from '../modules/cart/producers/cartProducer';
 import { connectInvoiceConsumer } from '../modules/payments/consumer/invoiceConsumer';
-import { cartProducer } from '../modules/cart/producers/cartProducer';
 
 @injectable()
 export class Application {
@@ -67,7 +66,6 @@ export class Application {
     await productProducer.connect();
     await paymentProducer.connect();
     await invoiceProducer.connect();
-    await cartProducer.connect();
     await cartProducer.connect();
     Logger.info('Producers initialized');
   }
