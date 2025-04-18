@@ -27,20 +27,18 @@ export const connectInvoiceConsumer = async () => {
         if (!value) return;
         const eventData = JSON.parse(value.toString());
 
-        
         const user = await userService.findById(eventData.payload.userId);
         if (!user) {
           Logger.error('User not found for invoice');
           return;
         }
 
-       
         if (Array.isArray(eventData.payload.items)) {
           for (const item of eventData.payload.items) {
             const product = await productService.findById(item.productId);
             if (!product) {
               Logger.error(`Product not found for invoice: ${item.productId}`);
-              return; 
+              return;
             }
           }
         }
@@ -59,14 +57,14 @@ export const connectInvoiceConsumer = async () => {
             : 0;
         }
 
-        
         const facturePayload = {
           to: user.email,
-          subject: `Factura de tu pedido #${eventData.payload.orderId || eventData.id}`,
+          subject: `Factura de tu pedido #${
+            eventData.payload.orderId || eventData.id
+          }`,
           content: `Total: $${total}`,
         };
 
-        
         await invoiceProducer.send({
           topic: CONSTANT_KAFKA.TOPIC.NOTIFICATION.EMAIL,
           messages: [
@@ -81,7 +79,6 @@ export const connectInvoiceConsumer = async () => {
           ],
         });
 
-       
         await eventService.save({
           ...eventData,
           id: `evt_${new mongoose.Types.ObjectId().toString()}`,
