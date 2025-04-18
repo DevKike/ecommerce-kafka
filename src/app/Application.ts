@@ -11,7 +11,10 @@ import { envSchema } from '../core/environments/validation/envSchema';
 import { runSeeder } from '../modules/products/seed/runSeeder';
 import { productProducer } from '../modules/products/producers/productProducer';
 import { connectNotificationsConsumer } from '../modules/notifications/consumer/notificationConsumer';
+import { paymentProducer } from '../modules/payments/producers/paymentProducer';
+import { invoiceProducer } from '../modules/payments/producers/invoiceProducer';
 import { cartProducer } from '../modules/cart/producers/cartProducer';
+import { connectInvoiceConsumer } from '../modules/payments/consumer/invoiceConsumer';
 
 @injectable()
 export class Application {
@@ -61,12 +64,15 @@ export class Application {
   private async initProducers(): Promise<void> {
     await userProducer.connect();
     await productProducer.connect();
+    await paymentProducer.connect();
+    await invoiceProducer.connect();
     await cartProducer.connect();
     Logger.info('Producers initialized');
   }
 
   private async initConsumers(): Promise<void> {
     await connectNotificationsConsumer();
+    await connectInvoiceConsumer();
     Logger.info('Consumers initialized');
   }
 

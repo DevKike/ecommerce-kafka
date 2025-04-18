@@ -4,6 +4,8 @@ export const CONSTANT_KAFKA = {
     PRODUCT_SERVICE: 'ProductService',
     CART_SERVICE: 'CartService',
     NOTIFICATION_SERVICE: 'NotificationService',
+    PAYMENT_SERVICE: 'OrderService',
+    BILLING_SERVICE: 'BillingService',
   },
 
   TOPIC: {
@@ -21,6 +23,12 @@ export const CONSTANT_KAFKA = {
     },
     NOTIFICATION: {
       EMAIL: 'email_notification',
+    },
+    ORDER: {
+      CREATED: 'order_created',
+    },
+    INVOICE: {
+      PROCESSING: 'invoice_processing',
     },
   },
 };

@@ -1,0 +1,65 @@
+<html lang='es'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>{{subject}}</title>
+    <style>
+     body { font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f4f6f8; margin: 0; padding: 0; color: #333; line-height: 1.6;
+      } .container { max-width: 600px; margin: 40px auto; background: #fff;
+      border-radius: 12px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); overflow:
+      hidden; } .header { text-align: center; padding: 30px 20px; background:
+      linear-gradient(135deg, #1976d2, #64b5f6); color: white; } .header img {
+      width: 80px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 2px
+      4px rgba(0, 0, 0, 0.2)); } .title { font-size: 28px; margin: 0;
+      font-weight: 600; letter-spacing: 0.5px; } .subtitle { font-size: 18px;
+      margin: 8px 0 0; opacity: 0.9; font-weight: 400; } .content { padding: 30px; } .details {
+      background: #f9fafb; border-radius: 8px; padding: 25px; margin-bottom:
+      25px; border-left: 4px solid #1976d2; } .details p { margin: 10px 0;
+      font-size: 16px; display: flex; justify-content: space-between; } .details
+      strong { color: #1976d2; } .total { font-size: 24px; color: #2e7d32;
+      font-weight: bold; margin-top: 20px; text-align: right; border-top: 1px
+      solid #e0e0e0; padding-top: 15px; } 
+      .additional-info { background: #e8f5e9; border-radius: 8px; padding: 20px;
+      margin-bottom: 25px; } .additional-info h3 { margin-top: 0; color:
+      #2e7d32; }  .action-button { display: block;
+      text-align: center; background: #1976d2; color: white; padding: 14px 24px;
+      text-decoration: none; border-radius: 6px; font-weight: 600; margin: 30px
+      auto; width: 60%; transition: background 0.3s; } .action-button:hover {
+      background: #1565c0; }  /* Diseño
+      responsivo */ @media only screen and (max-width: 620px) { .container {
+      width: 100%; margin: 0; border-radius: 0; } .content { padding: 20px; }
+      .action-button { width: 80%; } }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <!-- Cabecera -->
+      <div class='header'>
+        <img
+          src='https://cdn-icons-png.flaticon.com/512/1170/1170576.png'
+          alt='Confirmación de compra'
+        />
+        <h1 class='title'>¡Gracias por tu compra!</h1>
+        <p class='subtitle'>{{subject}}</p>
+      </div>
+
+      <div class='content'>
+        <p>Hola <strong>{{to}}</strong>,</p>
+        <p>Hemos recibido tu pedido correctamente. A continuación encontrarás el
+          detalle de tu compra:</p>
+
+        <div class='details'>
+          <p><strong>Fecha:</strong> <span>{{date}}</span></p>
+          <p><strong>Estado:</strong>
+            <span
+              style='color: #2e7d32; font-weight: bold;'
+            >Confirmado</span></p>
+          <div class='total'>Total: {{content}}</div>
+        </div>
+
+      </div>
+
+    </div>
+  </body>
+</html>
