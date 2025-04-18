@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <title>Producto eliminado del carrito</title>
+    <style>
+      body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6fb;
+      margin: 0; padding: 0; } .container { max-width: 480px; margin: 40px auto;
+      background: #fff; border-radius: 16px; box-shadow: 0 4px 24px
+      rgba(0,0,0,0.08); overflow: hidden; } .header { background:
+      linear-gradient(90deg, #ff6a00 0%, #ee0979 100%); padding: 32px 0 16px 0;
+      text-align: center; } .header .icon { font-size: 48px; color: #fff;
+      margin-bottom: 8px; display: block; } .header h1 { color: #fff; font-size:
+      2rem; margin: 0; letter-spacing: 1px; } .content { padding: 32px 24px 24px
+      24px; text-align: center; } .content p { font-size: 1.1rem; color: #333;
+      margin-bottom: 24px; } .product-card { background: #f8f9fa; border-radius:
+      8px; padding: 18px; margin: 0 auto 24px auto; display: inline-block;
+      min-width: 220px; box-shadow: 0 2px 8px rgba(238,9,121,0.06); }
+      .product-name { font-weight: 600; color: #ee0979; font-size: 1.15rem; }
+      .footer { background: #f4f6fb; padding: 18px 0; text-align: center; color:
+      #888; font-size: 0.95rem; } @media (max-width: 600px) { .container {
+      max-width: 98%; } .content { padding: 20px 8px 16px 8px; } }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <div class='header'>
+        <span class='icon'>🛒<span style='margin: 0 5px;'>→</span>❌</span>
+        <h1>¡Producto eliminado de tu carrito!</h1>
+      </div>
+      <div class='content'>
+        <p style='font-size: 1.2rem; color: #555;'>Hemos eliminado este producto
+          de tu carrito de compras:</p>
+        <div
+          class='product-card'
+          style='border-left: 4px solid #ee0979; text-align: left; padding: 20px;'
+        >
+          <span
+            class='product-name'
+            style='display: block; margin-bottom: 8px;'
+          >{{productName}}</span>
+          {{#if productInfo}}
+            <span style='color: #666; font-size: 0.9rem;'>{{productInfo}}</span>
+          {{/if}}
+        </div>
+
+        <div
+          style='margin: 30px 0; border-top: 1px dashed #ddd; padding-top: 20px;'
+        >
+          <p>¿Fue un error? No hay problema.</p>
+          <a
+            href='{{storeUrl}}'
+            style='display: inline-block; background: linear-gradient(90deg, #ff6a00 0%, #ee0979 100%); color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; font-weight: bold; margin-top: 10px; box-shadow: 0 4px 8px rgba(238,9,121,0.2);'
+          >
+            Volver a la tienda
+          </a>
+        </div>
+
+        <p style='font-size: 0.95rem; color: #777;'>
+          Si tienes alguna pregunta sobre tu carrito, contáctanos en
+          <a
+            href='mailto:ayuda@tutienda.com'
+            style='color: #ee0979; text-decoration: none;'
+          >ayuda@tutienda.com</a>
+        </p>
+      </div>
+      <div class='footer' style='border-top: 1px solid #eaeaea;'>
+        <div style='margin-bottom: 8px;'>
+          <a
+            href='{{socialFacebook}}'
+            style='text-decoration: none; color: #888; margin: 0 8px;'
+          >Facebook</a>
+          <a
+            href='{{socialInstagram}}'
+            style='text-decoration: none; color: #888; margin: 0 8px;'
+          >Instagram</a>
+          <a
+            href='{{socialTwitter}}'
+            style='text-decoration: none; color: #888; margin: 0 8px;'
+          >Twitter</a>
+        </div>
+        &copy;
+        {{year}}
+        Tu Tienda Online - Todos los derechos reservados
+      </div>
+    </div>
+  </body>
+</html>
