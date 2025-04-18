@@ -5,9 +5,13 @@ import { CONSTANT_KAFKA } from '../../common/kafka/constants/constantsKafka';
 import { eventService } from '../../common/kafka/events/services/eventService';
 import { paymentProducer } from '../producers/paymentProducer';
 import { cartService } from '../../cart/services/cartService';
+import { IUser } from '../../auth/models/IUser';
 
 export const paymentController = {
-  createPaymentEvent: async (payment: IPayment): Promise<void> => {
+  createPaymentEvent: async (
+    userId: IUser['id'],
+    payment: IPayment
+  ): Promise<void> => {
     try {
       const eventId = new mongoose.Types.ObjectId();
       const orderId = `order_${eventId.toString()}`;
@@ -19,10 +23,11 @@ export const paymentController = {
         topic: CONSTANT_KAFKA.TOPIC.ORDER.CREATED,
         payload: {
           ...payment,
+          userId,
           orderId,
         },
         snapshot: {
-          id: payment.userId,
+          userId,
           status: 'CREATED',
         },
       };
@@ -53,7 +58,7 @@ export const paymentController = {
       await eventService.save(paymentEvent);
 
       for (const item of payment.items) {
-        await cartService.removeFromCart(payment.userId, item.productId);
+        await cartService.removeFromCart(userId, item.productId);
       }
     } catch (error) {
       Logger.error('Error creating payment event', error);

@@ -12,7 +12,6 @@ export const connectNotificationsConsumer = async () => {
   try {
     await notificationConsumer.connect();
     Logger.info('Notification consumer connected');
-    Logger.info('Notification consumer connected');
 
     await notificationConsumer.subscribe({
       topics: [

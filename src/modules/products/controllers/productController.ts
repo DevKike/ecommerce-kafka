@@ -10,7 +10,17 @@ import { eventService } from '../../common/kafka/events/services/eventService';
 export const productController = {
   getAllProducts: async (): Promise<IProduct[]> => {
     try {
-      return await productService.findAll();
+      const products = await productService.findAll();
+
+      const plainProducts = products.map((product) => {
+        const plainProduct = JSON.parse(JSON.stringify(product));
+
+        delete plainProduct._id;
+
+        return plainProduct;
+      });
+
+      return plainProducts;
     } catch (error) {
       throw error;
     }
