@@ -22,13 +22,7 @@ export class MongoConnection {
     }
 
     try {
-      const username = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_USERNAME;
-      const password = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_PASSWORD;
-      const host = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_HOST;
-      const port = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_PORT;
-      const dbName = CONSTANT_CONFIG.ENVIRONMENT.DB_NAME;
-
-      const mongoUri = `mongodb://${username}:${password}@${host}:${port}/${dbName}?authSource=admin`;
+      const mongoUri = CONSTANT_CONFIG.ENVIRONMENT.MONGO_URI!;
 
       await mongoose.connect(mongoUri, {
         serverSelectionTimeoutMS: 5000,
