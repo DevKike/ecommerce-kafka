@@ -19,7 +19,7 @@ export const CONSTANT_KAFKA = {
     CART: {
       CHECKOUT: 'cart_checkout',
       UPDATED: 'cart_updates',
-      REMOVED: 'cart-removals',
+      REMOVED: 'cart_removals',
     },
     NOTIFICATION: {
       EMAIL: 'email_notification',
