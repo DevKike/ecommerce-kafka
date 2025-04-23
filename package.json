@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "postinstall": "npm run build",
     "start:dev": "ts-node-dev --env-file=.env.dev src/index.ts",
     "start:prod": "ts-node-dev --env-file=.env.prod src/index.ts"
   },
@@ -19,6 +22,7 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "handlebars": "^4.7.8",
     "inversify": "^7.5.0",

@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { Application } from './app/Application';
 import { container } from './core/inversify/config/inversifyConfig';
 import { TYPES } from './core/inversify/types/inversifyTypes';
