@@ -1,55 +1,55 @@
-# Proyecto E-commerce con Kafka
+# E-commerce Project with Kafka
 
-## Descripción
+## Description
 
-Este proyecto es una aplicación de comercio electrónico (e-commerce) que utiliza **Apache Kafka** como sistema de mensajería para implementar una arquitectura basada en eventos. A continuación, se presentan sus principales características.
-
----
-
-## 🧱 Arquitectura
-
-- **Patrón de Eventos**: Comunicación asíncrona entre servicios utilizando Apache Kafka como broker de mensajes.
-- **Microservicios**: La aplicación está dividida en varios módulos funcionales:
-  - Usuarios
-  - Productos
-  - Carrito
-  - Pagos
-  - Notificaciones
-- **Base de Datos**: MongoDB para almacenamiento persistente de datos.
+This project is an e-commerce application that uses **Apache Kafka** as a messaging system to implement an event-driven architecture. Below are its main features.
 
 ---
 
-## 🧩 Principales Módulos
+## 🧱 Architecture
 
-- **Autenticación (auth)**: Manejo de registro y login de usuarios.
-- **Productos**: Catálogo de productos disponibles.
-- **Carrito (cart)**: Gestión del carrito de compras.
-- **Pagos (payments)**: Procesamiento de órdenes y generación de facturas.
-- **Notificaciones**: Envío de correos electrónicos a usuarios.
-
----
-
-## 🔄 Flujos de Eventos Principales
-
-- **Registro de Usuario**: Al registrarse un usuario, se publica un evento `welcome_flow` que desencadena el envío de un correo de bienvenida.
-- **Gestión de Carrito**: Al añadir o eliminar productos, se publican eventos `cart_updates` y `cart_removals`.
-- **Procesamiento de Órdenes**: Al crear una orden, se generan eventos para procesar el pago y emitir la factura.
-- **Notificaciones**: Los eventos generan correos automáticos para acciones como bienvenida, eliminación de carrito o facturas.
+- **Event-Driven Pattern**: Asynchronous communication between services using Apache Kafka as the message broker.
+- **Microservices**: The application is divided into several functional modules:
+  - Users
+  - Products
+  - Cart
+  - Payments
+  - Notifications
+- **Database**: MongoDB for persistent data storage.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## 🧩 Main Modules
 
-- **Backend**: Node.js con TypeScript
-- **Mensajería**: Apache Kafka
-- **Base de Datos**: MongoDB
-- **Correo Electrónico**: Nodemailer
-- **Contenedores**: Docker para Kafka, Zookeeper y MongoDB
-- **Autenticación**: JSON Web Tokens (JWT)
+- **Authentication (auth)**: Handles user registration and login.
+- **Products**: Catalog of available products.
+- **Cart**: Shopping cart management.
+- **Payments**: Order processing and invoice generation.
+- **Notifications**: Sends email notifications to users.
 
 ---
 
-## 👨‍💻 Integrantes del Proyecto
+## 🔄 Main Event Flows
+
+- **User Registration**: When a user registers, a `welcome_flow` event is published, triggering the sending of a welcome email.
+- **Cart Management**: When adding or removing products, `cart_updates` and `cart_removals` events are published.
+- **Order Processing**: When an order is created, events are generated to process the payment and issue the invoice.
+- **Notifications**: Events trigger automatic emails for actions such as welcome messages, cart removals, or invoices.
+
+---
+
+## 🛠️ Technologies Used
+
+- **Backend**: Node.js with TypeScript
+- **Messaging**: Apache Kafka
+- **Database**: MongoDB
+- **Email**: Nodemailer
+- **Containers**: Docker for Kafka, Zookeeper, and MongoDB
+- **Authentication**: JSON Web Tokens (JWT)
+
+---
+
+## 👨‍💻 Project Members
 
 - Sahir Ruiz Taborda  
 - Martin Escudero Hernández  
@@ -58,6 +58,6 @@ Este proyecto es una aplicación de comercio electrónico (e-commerce) que utili
 
 ---
 
-## 🚀 Objetivo
+## 🚀 Objective
 
-Implementar un sistema e-commerce escalable, mantenible y desacoplado, aprovechando los beneficios de la arquitectura orientada a eventos.
+To implement a scalable, maintainable, and decoupled e-commerce system by leveraging the benefits of event-driven architecture.
