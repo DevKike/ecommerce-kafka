@@ -15,6 +15,7 @@ export const envSchema = Joi.object({
   MAIL_SERVICE: Joi.string().valid('gmail').required(),
   MAIL_USER: Joi.string().required(),
   MAIL_PASSWORD: Joi.string().required(),
+  KAFKA_CLIENT_ID: Joi.string().required(),
   KAFKA_BROKER: Joi.string().required(),
   KAFKA_API_KEY: Joi.string().required(),
   KAFKA_SECRET: Joi.string().required(),
