@@ -22,9 +22,9 @@ export class MongoConnection {
     }
 
     try {
-      const mongoUri = CONSTANT_CONFIG.ENVIRONMENT.MONGO_URI!;
+      const mongoDbUri = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_URI!;
 
-      await mongoose.connect(mongoUri, {
+      await mongoose.connect(mongoDbUri, {
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 45000,
       });

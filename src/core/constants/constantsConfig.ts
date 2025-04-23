@@ -3,7 +3,7 @@ export const CONSTANT_CONFIG = {
     NODE_ENV: process.env.NODE_ENV || 'development',
     PORT: Number(process.env.PORT) || 3000,
     DB_NAME: process.env.DB_NAME || 'E-commerceKafka',
-    MONGO_URI: process.env.MONGODB_URI,
+    MONGODB_URI: process.env.MONGODB_URI,
     LOG_LEVEL: process.env.LOG_LEVEL || 'info',
     HASH_SALT: Number(process.env.HASH_SALT) || 10,
     JWT_SECRET: process.env.JWT_SECRET,
