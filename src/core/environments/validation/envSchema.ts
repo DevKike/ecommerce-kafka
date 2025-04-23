@@ -5,7 +5,7 @@ export const envSchema = Joi.object({
     .valid('development', 'production', 'test')
     .default('development'),
   PORT: Joi.number().default(3000),
-  DB_NAME: Joi.string().default('E-commerceKafka'),
+  DB_NAME: Joi.string().default('ecommerce_kafka_db'),
   MONGODB_URI: Joi.string().required(),
   LOG_LEVEL: Joi.string()
     .valid('error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly')
@@ -15,4 +15,7 @@ export const envSchema = Joi.object({
   MAIL_SERVICE: Joi.string().valid('gmail').required(),
   MAIL_USER: Joi.string().required(),
   MAIL_PASSWORD: Joi.string().required(),
+  KAFKA_BROKER: Joi.string().required(),
+  KAFKA_API_KEY: Joi.string().required(),
+  KAFKA_SECRET: Joi.string().required(),
 });

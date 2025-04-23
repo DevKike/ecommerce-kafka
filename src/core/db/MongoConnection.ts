@@ -25,6 +25,7 @@ export class MongoConnection {
       const mongoDbUri = CONSTANT_CONFIG.ENVIRONMENT.MONGODB_URI!;
 
       await mongoose.connect(mongoDbUri, {
+        dbName: CONSTANT_CONFIG.ENVIRONMENT.DB_NAME,
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 45000,
       });
